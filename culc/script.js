@@ -1,27 +1,43 @@
 const quizData = [
     {
-        question: "日本の首都はどこですか？",
-        a: "大阪",
-        b: "名古屋",
-        c: "京都",
-        d: "東京",
-        correct: "d"
-    },
-    {
-        question: "ピカソの有名な絵はどれですか？",
-        a: "モナ・リザ",
-        b: "ゲルニカ",
-        c: "最後の晩餐",
-        d: "ひまわり",
-        correct: "b"
-    },
-    {
-        question: "地球の周囲はどれくらいですか？",
-        a: "約20,000km",
-        b: "約30,000km",
-        c: "約40,000km",
-        d: "約50,000km",
+        question: "3+2-5=",
+        a: "6",
+        b: "-2",
+        c: "0",
+        d: "-6",
         correct: "c"
+    },
+    {
+        question: "3-6-5+4=",
+        a: "-4",
+        b: "-2",
+        c: "2",
+        d: "3",
+        correct: "a"
+    },
+    {
+        question: "75-325+375-25=",
+        a: "100",
+        b: "150",
+        c: "200",
+        d: "250",
+        correct: "a"
+    },
+    {
+        question: "(4-6)+7-3=",
+        a: "2",
+        b: "6",
+        c: "8",
+        d: "10",
+        correct: "c"
+    },
+    {
+        question: "13-(2-4)-5=",
+        a: "7",
+        b: "8",
+        c: "9",
+        d: "10",
+        correct: "d"
     }
 ];
 
@@ -35,7 +51,7 @@ function buildQuiz() {
     quizData.forEach((currentQuestion, questionNumber) => {
         const answers = [];
 
-        for (letter in currentQuestion) {
+        for (let letter in currentQuestion) {
             if (letter !== 'question' && letter !== 'correct') {
                 answers.push(
                     `<label>
