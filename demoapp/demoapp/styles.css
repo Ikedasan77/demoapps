@@ -1,9 +1,9 @@
 body {
     font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    display: flex;/* フレックスボックスレイアウトを使用 */
+    justify-content: center; /* コンテンツを水平中央に配置 */
+    align-items: center;/* コンテンツを垂直中央に配置 */
+    height: 100vh; /* ビューポートの高さを100%に設定 */
     margin: 0;
     background-color: #f0f0f0;
 }
@@ -11,7 +11,7 @@ body {
 .quiz-container {
     background-color: #fff;
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 8px; /* 角を8pxの半径で丸める */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
     max-width: 600px;
@@ -38,12 +38,12 @@ button {
     padding: 10px 20px;
     font-size: 18px;
     margin: 5px;
-    border: none;
+    border: none; /* ボーダーをなくす */
     border-radius: 4px;
-    cursor: pointer;
+    cursor: pointer; /* カーソルをポインタに変更 */
     background-color: #007BFF;
     color: #fff;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s;/* 背景色の変化に0.3秒のトランジションを設定 */
 }
 
 button:hover {
