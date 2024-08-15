@@ -86,6 +86,7 @@ const quizContainer = document.getElementById('quiz');
 const resultsContainer = document.getElementById('results');
 const submitButton = document.getElementById('submit');
 const nextButton = document.getElementById('next');
+const nextSound = document.getElementById('nextSound'); // 効果音のオーディオ要素を取得
 
 let currentQuizData = []; // 現在表示されているクイズのデータ
 let currentIndex = 0; // 現在のクイズのインデックス
@@ -160,6 +161,8 @@ function nextQuiz() {
     }
     buildQuiz();
     resultsContainer.innerHTML = '';  // 前回の結果をクリア
+    nextSound.volume = 0.6;  // 音量を50%に設定
+    nextSound.play();  // 効果音を再生
 }
 
 // 初期クイズの表示
