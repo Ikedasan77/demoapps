@@ -1,0 +1,11 @@
+<form method="post">
+    {% csrf_token %}  <!-- CSRFトークンを追加（セキュリティ対策） -->
+    {% for question in questions %}
+        <div>
+            <p>{{ question.text }}</p>  <!-- 問題文を表示 -->
+            <input type="number" name="answer_{{ forloop.counter0 }}">  <!-- ユーザーの解答を入力 -->
+            <input type="hidden" name="question_id_{{ forloop.counter0 }}" value="{{ question.id }}">  <!-- 問題のIDを隠しフィールドで送信 -->
+        </div>
+    {% endfor %}
+    <button type="submit">回答を送信</button>  <!-- 解答を送信するボタン -->
+</form>
