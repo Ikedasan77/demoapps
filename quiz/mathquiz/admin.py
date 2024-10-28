@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import Question
 
-# Register your models here.
+# Questionモデルを管理画面に登録
+admin.site.register(Question)
