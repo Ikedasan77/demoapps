@@ -15,11 +15,16 @@ def quiz_view(request):
                 score += 1
             else:
                 wrong_questions.append(question)  # 間違えた場合、リストに追加
+
+        incorrect_count = 10 - score  # 不正解数を計算
+
         return render(request, 'mathquiz/result.html', {
             'score': score,  # 正解数をテンプレートに渡す
+            'incorrect_count': incorrect_count,  # 不正解数をテンプレートに渡す
             'wrong_questions': wrong_questions,  # 間違えた問題をテンプレートに渡す
             'advice': get_advice(score)  # アドバイスをテンプレートに渡す
         })
+
     else:  # GETリクエスト（クイズ開始時）の場合
         questions = list(Question.objects.all())  # すべての問題を取得
         selected_questions = random.sample(questions, 10)  # ランダムに10問選択
@@ -34,5 +39,4 @@ def get_advice(score):
     elif score >= 4:
         return "頑張りましたね！間違えたところをもう一度確認しましょう。"
     else:
-        return "諦めずに挑戦しましょう！次はもっと良い結果が出せるはずです！"
-    
+        return "諦めずに挑戦しましょう！次はもっと良い結果が出せるはずです。"

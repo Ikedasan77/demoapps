@@ -1,3 +1,4 @@
+
 {% if wrong_questions %}
     <h3>間違えた問題と解説</h3>
     <ul>
@@ -9,3 +10,14 @@
     {% endfor %}
     </ul>
 {% endif %}
+
+<!-- 総評を表示するボタン -->
+<button onclick="showSummary()">総評を見る</button>
+
+<!-- JavaScriptコードでポップアップを表示 -->
+<script>
+function showSummary() {
+    // 正解数、不正解数、アドバイスをポップアップで表示
+    alert("あなたの正解数は {{ score }} 問です。\n不正解数は {{ incorrect_count }} 問です。\n{{ advice }}");
+}
+</script>
