@@ -7,22 +7,24 @@ def quiz_view(request):
     if request.method == 'POST':  # POSTリクエスト（解答送信後）の場合
         score = 0  # 正解数の初期化
         wrong_questions = []  # 間違えた問題のリスト
+        questions = []  # 全ての出題された問題を保持するリスト
         for i in range(10):
             user_answer = int(request.POST.get(f'answer_{i}'))  # ユーザーの解答を取得
             question_id = int(request.POST.get(f'question_id_{i}'))  # 問題のIDを取得
             question = Question.objects.get(id=question_id)  # 問題をデータベースから取得
+            questions.append(question)  # 出題された問題をリストに追加
             if user_answer == question.correct_answer:  # 正解かどうかを判定
                 score += 1
             else:
                 wrong_questions.append(question)  # 間違えた場合、リストに追加
-
+        
         incorrect_count = 10 - score  # 不正解数を計算
 
         return render(request, 'mathquiz/result.html', {
             'score': score,  # 正解数をテンプレートに渡す
-            'incorrect_count': incorrect_count,  # 不正解数をテンプレートに渡す
-            'wrong_questions': wrong_questions,  # 間違えた問題をテンプレートに渡す
-            'advice': get_advice(score)  # アドバイスをテンプレートに渡す
+            'questions': questions,  # 出題された全ての問題をテンプレートに渡す
+            'wrong_questions': wrong_questions,
+            'advice': get_advice(score)  # アドバイスもテンプレートに渡す  # 間違えた問題をテンプレートに渡す
         })
 
     else:  # GETリクエスト（クイズ開始時）の場合

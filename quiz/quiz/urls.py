@@ -19,6 +19,6 @@ from django.urls import path, include
 
 # プロジェクト全体のURLパターンを定義
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),  # 管理サイトのURL
     path('', include('mathquiz.urls')),  # mathquizのURLを含める
 ]
