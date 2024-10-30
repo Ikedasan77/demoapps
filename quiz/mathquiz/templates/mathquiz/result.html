@@ -1,27 +1,37 @@
-{% if wrong_questions %}
-    <details>
-        <summary>間違えた問題と解説を表示する</summary>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>計算アプリ - 結果</title>
+    <script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
+    </script>  <!-- MathJaxライブラリを読み込んでLaTeX形式の数式をレンダリング -->
+</head>
+<body>
+    <h2>結果</h2>
+
+    <h3>出題された全ての問題とその正解</h3>
+    <ol>
+    {% for question in questions %}
+        <li>\( \displaystyle {{ question.text }} = {{ question.correct_answer }} \)</li>  <!-- MathJaxで数式を表示 -->
+    {% endfor %}
+    </ol>
+
+    {% if wrong_questions %}
+        <h3>間違えた問題と解説</h3>
         <ul>
         {% for question in wrong_questions %}
-            <li>
-                <strong>{{ question.text }}</strong><br>
-                解説: {{ question.explanation }}
-            </li>
+            <li><strong>\( \displaystyle {{ question.text }} \)</strong><br>解説: {{ question.explanation }}</li>  <!-- MathJaxで数式を表示 -->
         {% endfor %}
         </ul>
-    </details>
-{% endif %}
+    {% endif %}
 
-<!-- 総評を表示するボタン -->
-<button onclick="showSummary()">総評を見る</button>
+    <!-- 総評の表示 -->
+    <h3>総評</h3>
+    <p>{{ advice }}</p>
 
-<!-- 問題に戻るボタン -->
-<button onclick="location.href='/'">問題に戻る</button>  <!-- トップページに戻るボタン -->
-
-<!-- JavaScriptコードでポップアップを表示 -->
-<script>
-function showSummary() {
-    // 正解数、不正解数、アドバイスをポップアップで表示
-    alert("あなたの正解数は {{ score }} 問です。\n不正解数は {{ incorrect_count }} 問です。\n{{ advice }}");
-}
-</script>
+    <!-- 問題に戻るボタン -->
+    <br><button onclick="location.href='/'">次の問題</button>  <!-- トップページに戻るボタン -->
+</body>
+</html>

@@ -1,18 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>計算アプリ - 正負の数編</title>
     <script type="text/javascript" async
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
-    </script>  <!-- MathJaxライブラリを読み込んで数学記号をレンダリング -->
+    </script>  <!-- MathJaxライブラリを読み込んでLaTeX形式の数式をレンダリング -->
 </head>
-
-<h1>計算アプリ　正負の数編</h1>
-<form method="post">
-    {% csrf_token %}  <!-- CSRFトークンを追加（セキュリティ対策） -->
-    {% for question in questions %}
-        <div>
-            <p>\( \displaystyle {{ question.text }} \)</p>  <!-- MathJaxでLaTeX形式の数式を表示 -->
-            <input type="number" name="answer_{{ forloop.counter0 }}">  <!-- ユーザーの解答を入力 -->
-            <input type="hidden" name="question_id_{{ forloop.counter0 }}" value="{{ question.id }}">  <!-- 問題のIDを隠しフィールドで送信 -->
-        </div>
-    {% endfor %}
-    <button type="submit">回答を送信</button>  <!-- 解答を送信するボタン -->
-</form>
+<body>
+    <h1>計算アプリ　正負の数編</h1>
+    <form method="post">
+        {% csrf_token %}  <!-- CSRFトークンを追加（セキュリティ対策） -->
+        {% for question in questions %}
+            <div style="display: flex; align-items: center;">
+                <p style="outline: none; margin-right: 10px;">\( \displaystyle {{ question.text }} \)</p>  <!-- MathJaxでLaTeX形式の数式を表示し、枠囲みをなくす -->
+                <input type="number" name="answer_{{ forloop.counter0 }}" style="margin-left: 10px;">  <!-- 枠囲みを表示した回答欄 -->
+                <input type="hidden" name="question_id_{{ forloop.counter0 }}" value="{{ question.id }}">  <!-- 問題のIDを隠しフィールドで送信 -->
+            </div>
+        {% endfor %}
+        <button type="submit">回答を送信</button>  <!-- 解答を送信するボタン -->
+    </form>
+</body>
+</html>
