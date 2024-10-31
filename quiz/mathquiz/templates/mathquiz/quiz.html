@@ -1,3 +1,5 @@
+{% load static %}  <!-- Djangoの静的ファイル読み込みを使う -->
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -8,8 +10,10 @@
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
     </script>  <!-- MathJaxライブラリを読み込んでLaTeX形式の数式をレンダリング -->
 </head>
-<body>
+<body onload="startCountdown()">  <!-- ページが読み込まれたら自動的にカウントダウンを開始 -->
     <h1>計算アプリ　正負の数編</h1>
+    <div id="timer">残り時間: 60秒</div> <!-- タイマーの表示 -->
+
     <form method="post">
         {% csrf_token %}  <!-- CSRFトークンを追加（セキュリティ対策） -->
         {% for question in questions %}
@@ -21,5 +25,38 @@
         {% endfor %}
         <button type="submit">回答を送信</button>  <!-- 解答を送信するボタン -->
     </form>
+
+    <!-- JavaScriptでタイマーと音声を実装 -->
+    <script>
+        let countdownInterval;
+        let timerDuration = 60; // カウントダウンの秒数（1分）
+
+        // 音声ファイルの定義（staticフォルダ内のパスを指定）
+        let countdownAudio = new Audio("{% static 'soundeffects/cdtimer.mp3' %}");  // 残り1分からのカウントダウン用音声
+        let finalSecondsAudio = new Audio("{% static 'soundeffects/cdtimer_2.mp3' %}");  // 残り20秒のときの音声
+
+        function startCountdown() {
+            let remainingTime = timerDuration;
+            document.getElementById("timer").innerText = `残り時間: ${remainingTime}秒`;
+
+            // タイマー開始時に音声を再生
+            countdownAudio.play();
+
+            countdownInterval = setInterval(() => {
+                remainingTime--;
+                document.getElementById("timer").innerText = `残り時間: ${remainingTime}秒`;
+
+                if (remainingTime === 20) {
+                    // 残り20秒になったら別の音声を再生
+                    finalSecondsAudio.play();
+                }
+
+                if (remainingTime <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById("timer").innerText = "時間切れです！";
+                }
+            }, 1000);
+        }
+    </script>
 </body>
 </html>
