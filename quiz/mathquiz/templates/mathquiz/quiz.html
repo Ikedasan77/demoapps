@@ -9,6 +9,14 @@
     <script type="text/javascript" async
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
     </script>  <!-- MathJaxライブラリを読み込んでLaTeX形式の数式をレンダリング -->
+
+    <!-- ボタンをクリックしたときに音声を再生する関数 -->
+    <script>
+        function playButtonClickSound() {
+            let buttonClickAudio = new Audio('{% static "soundeffects/decision.mp3" %}');
+            buttonClickAudio.play();
+        }
+    </script>
 </head>
 <body onload="startCountdown()">  <!-- ページが読み込まれたら自動的にカウントダウンを開始 -->
     <h1>計算アプリ　正負の数編</h1>
@@ -23,7 +31,8 @@
                 <input type="hidden" name="question_id_{{ forloop.counter0 }}" value="{{ question.id }}">  <!-- 問題のIDを隠しフィールドで送信 -->
             </div>
         {% endfor %}
-        <button type="submit">回答を送信</button>  <!-- 解答を送信するボタン -->
+        <button type="submit" onclick="playButtonClickSound()">回答を送信</button>  <!-- ボタンクリック時に音声を再生 -->
+
     </form>
 
     <!-- JavaScriptでタイマーと音声を実装 -->

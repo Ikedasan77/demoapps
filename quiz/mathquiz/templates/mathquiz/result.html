@@ -22,7 +22,7 @@
         <h3>間違えた問題と解説</h3>
         <ul>
         {% for question in wrong_questions %}
-            <li><strong>\( \displaystyle {{ question.text }} \)</strong><br>解説: {{ question.explanation }}</li>  <!-- MathJaxで数式を表示 -->
+            <li><strong>\( \displaystyle {{ question.text }} \)</strong><br>解説: {{ question.explanation|linebreaks }}</li>  <!-- MathJaxで数式を表示 -->
         {% endfor %}
         </ul>
     {% endif %}
