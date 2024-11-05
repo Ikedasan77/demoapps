@@ -9,14 +9,6 @@
     <script type="text/javascript" async
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
     </script>  <!-- MathJaxライブラリを読み込んでLaTeX形式の数式をレンダリング -->
-
-    <!-- ボタンをクリックしたときに音声を再生する関数 -->
-    <script>
-        function playButtonClickSound() {
-            let buttonClickAudio = new Audio('{% static "soundeffects/decision.mp3" %}');
-            buttonClickAudio.play();
-        }
-    </script>
 </head>
 <body onload="startCountdown()">  <!-- ページが読み込まれたら自動的にカウントダウンを開始 -->
     <h1>計算アプリ　正負の数編</h1>
@@ -31,8 +23,7 @@
                 <input type="hidden" name="question_id_{{ forloop.counter0 }}" value="{{ question.id }}">  <!-- 問題のIDを隠しフィールドで送信 -->
             </div>
         {% endfor %}
-        <button type="submit" onclick="playButtonClickSound()">回答を送信</button>  <!-- ボタンクリック時に音声を再生 -->
-
+        <button type="submit">回答を送信</button>  <!-- 解答を送信するボタン -->
     </form>
 
     <!-- JavaScriptでタイマーと音声を実装 -->
@@ -41,8 +32,8 @@
         let timerDuration = 60; // カウントダウンの秒数（1分）
 
         // 音声ファイルの定義（staticフォルダ内のパスを指定）
-        let countdownAudio = new Audio("{% static 'soundeffects/cdtimer.mp3' %}");  // 残り1分からのカウントダウン用音声
-        let finalSecondsAudio = new Audio("{% static 'soundeffects/cdtimer_2.mp3' %}");  // 残り20秒のときの音声
+        let countdownAudio = new Audio("{% static 'soundeffcts\cdtimer.mp3' %}");  // 残り1分からのカウントダウン用音声
+        let finalSecondsAudio = new Audio("{% static 'soundeffcts\cdtimer_2.mp3' %}");  // 残り20秒のときの音声
 
         function startCountdown() {
             let remainingTime = timerDuration;

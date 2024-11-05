@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -11,6 +13,9 @@
 <body>
     <h2>結果</h2>
 
+    <!-- 音声をバックグラウンドで再生するためのaudio要素 -->
+    <audio id="backgroundAudio" src="{% static 'mathquiz\static\audio\pythagoras-free1.mp3' %}" loop autoplay></audio>
+
     <h3>出題された全ての問題とその正解</h3>
     <ol>
     {% for question in questions %}
@@ -22,7 +27,7 @@
         <h3>間違えた問題と解説</h3>
         <ul>
         {% for question in wrong_questions %}
-            <li><strong>\( \displaystyle {{ question.text }} \)</strong><br>解説: {{ question.explanation|linebreaks }}</li>  <!-- MathJaxで数式を表示 -->
+            <li><strong>\( \displaystyle {{ question.text }} \)</strong><br>解説: {{ question.explanation }}</li>  <!-- MathJaxで数式を表示 -->
         {% endfor %}
         </ul>
     {% endif %}
@@ -33,5 +38,11 @@
 
     <!-- 問題に戻るボタン -->
     <br><button onclick="location.href='/'">次の問題</button>  <!-- トップページに戻るボタン -->
+
+    <script>
+        // 音量を設定（バックグラウンドでの処理）
+        const audio = document.getElementById('backgroundAudio');
+        audio.volume = 1.0;  // 音量を設定 (0.0 から 1.0 の範囲で指定可能)
+    </script>
 </body>
 </html>
