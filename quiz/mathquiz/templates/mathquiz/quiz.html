@@ -32,8 +32,8 @@
         let timerDuration = 60; // カウントダウンの秒数（1分）
 
         // 音声ファイルの定義（staticフォルダ内のパスを指定）
-        let countdownAudio = new Audio("{% static 'soundeffcts\cdtimer.mp3' %}");  // 残り1分からのカウントダウン用音声
-        let finalSecondsAudio = new Audio("{% static 'soundeffcts\cdtimer_2.mp3' %}");  // 残り20秒のときの音声
+        let countdownAudio = new Audio("{% static 'mathquiz\static\audio\cdtimer.mp3' %}");  // 残り1分からのカウントダウン用音声
+        let finalSecondsAudio = new Audio("{% static 'mathquiz\static\audio\cdtimer_2.mp3' %}");  // 残り20秒のときの音声
 
         function startCountdown() {
             let remainingTime = timerDuration;
