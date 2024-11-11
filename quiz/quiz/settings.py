@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-import os  # osモジュールのインポートを追加
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -113,8 +112,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -124,7 +121,7 @@ STATIC_URL = '/static/'
 
 # 静的ファイルの格納場所を指定
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'mathquiz', 'static'),# 静的ファイルのディレクトリを指定
+    BASE_DIR / "static",
 ]
 
 # Default primary key field type
