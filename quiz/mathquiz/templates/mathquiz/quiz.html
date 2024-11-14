@@ -13,8 +13,8 @@
     <style>
         body {
             background-color: #e0f7fa;
-            background-image: url('{% static "mathquiz\static\images\tegakinote.png" %}'); /* 手書き風の文房具のパターン */
-            background-size: contain;
+            background-image: url('{% static "mathquiz/images/tegakinote.png" %}'); /* 子供たちのイラストの背景 */
+            background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
         }
@@ -25,57 +25,53 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             max-width: 600px;
             margin: 40px auto;
-            background-image: url('{% static "mathquiz/static/images/tegakinote.png" %}'); /* 控えめに散りばめられた手書き風の文房具 */
-            background-size: 150px;
-            background-repeat: repeat;
+            text-align: center;
+        }
+        .question-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            width: 100%;
         }
         .question {
             font-size: 1.5rem;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 0;
             background-color: #a5d6a7; /* 視認性を向上するために背景色を濃いめに変更 */
             padding: 15px;
             border-radius: 10px;
-        }
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .option {
-            background-color: #64b5f6; /* 視認性を向上するために背景色を濃いめに変更 */
-            padding: 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .option:hover {
-            background-color: #42a5f5;
+            width: 80%; /* 全ての問題の横の長さを統一 */
+            background-image: url('{% static "tegakinote.png" %}'); /* 問題の背景に画像を追加 */
+            background-size: cover;
+            background-repeat: no-repeat;
         }
         input[type="number"] {
-            width: 100%; /* 解答欄の幅を統一するための変更 */
-            padding: 10px;
-            margin-left: 10px;
+            width: 20%; /* 回答欄の幅を狭くする */
+            padding: 15px;
             border-radius: 5px;
             border: 1px solid #ccc;
+            height: 64px; /* 問題と回答欄の高さを統一 */
         }
     </style>
 </head>
 <body onload="startCountdown()">  <!-- ページが読み込まれたら自動的にカウントダウンを開始 -->
-    <h1>計算アプリ　正負の数編</h1>
-    <div id="timer">残り時間: 60秒</div> <!-- タイマーの表示 -->
+    <h1 class="text-center text-3xl font-bold mt-10">計算アプリ　正負の数編</h1>
+    <div id="timer" class="text-center text-lg mt-4">残り時間: 60秒</div> <!-- タイマーの表示 -->
 
-    <form method="post">
-        {% csrf_token %}  <!-- CSRFトークンを追加（セキュリティ対策） -->
-        {% for question in questions %}
-            <div style="display: flex; align-items: center; margin-bottom: 15px;"> <!-- 解答欄と問題の配置を整えるためにスタイルを追加 -->
-                <p style="outline: none; margin-right: 10px;">\( \displaystyle {{ question.text }} \)</p>  <!-- MathJaxでLaTeX形式の数式を表示し、枠囲みをなくす -->
-                <input type="number" name="answer_{{ forloop.counter0 }}">  <!-- 枠囲みを表示した回答欄 -->
-                <input type="hidden" name="question_id_{{ forloop.counter0 }}" value="{{ question.id }}">  <!-- 問題のIDを隠しフィールドで送信 -->
-            </div>
-        {% endfor %}
-        <button type="submit">回答を送信</button>  <!-- 解答を送信するボタン -->
-    </form>
+    <div class="quiz-container">
+        <form method="post">
+            {% csrf_token %}  <!-- CSRFトークンを追加（セキュリティ対策） -->
+            {% for question in questions %}
+                <div class="question-container"> <!-- 問題と解答欄のコンテナ -->
+                    <p class="question">({{ forloop.counter }}) \( \displaystyle {{ question.text }} \)</p>  <!-- 出題順に番号を追加 -->
+                    <input type="number" name="answer_{{ forloop.counter0 }}">  <!-- 回答欄のサイズを小さく変更 -->
+                    <input type="hidden" name="question_id_{{ forloop.counter0 }}" value="{{ question.id }}">  <!-- 問題のIDを隠しフィールドで送信 -->
+                </div>
+            {% endfor %}
+            <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">回答を送信</button>  <!-- 解答を送信するボタン -->
+        </form>
+    </div>
 
     <!-- JavaScriptでタイマーと音声を実装 -->
     <script>
@@ -83,8 +79,8 @@
         let timerDuration = 60; // カウントダウンの秒数（1分）
 
         // 音声ファイルの定義（staticフォルダ内のパスを指定）
-        let countdownAudio = new Audio("{% static 'soundeffcts/cdtimer.mp3' %}");  // 残り1分からのカウントダウン用音声
-        let finalSecondsAudio = new Audio("{% static 'soundeffcts/cdtimer_2.mp3' %}");  // 残り20秒のときの音声
+        let countdownAudio = new Audio("{% static 'thinkingtime2.mp3' %}");  // カウントダウン開始時の音声
+        let endAudio = new Audio("{% static 'soundeffects/end_bell.mp3' %}");  // カウントダウン終了時の音声
 
         function startCountdown() {
             let remainingTime = timerDuration;
@@ -97,14 +93,10 @@
                 remainingTime--;
                 document.getElementById("timer").innerText = `残り時間: ${remainingTime}秒`;
 
-                if (remainingTime === 20) {
-                    // 残り20秒になったら別の音声を再生
-                    finalSecondsAudio.play();
-                }
-
                 if (remainingTime <= 0) {
                     clearInterval(countdownInterval);
                     document.getElementById("timer").innerText = "時間切れです！";
+                    endAudio.play();  // カウントダウン終了時の音声を再生
                 }
             }, 1000);
         }
