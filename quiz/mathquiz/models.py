@@ -1,13 +1,3 @@
-from django.db import models
-
-# 問題の種類カテゴリモデル
-class Category(models.Model):
-    name = models.CharField(max_length=100)  # カテゴリ名（例：正負の数、文字式、連立方程式など）
-
-    def __str__(self):
-        return self.name
-
-# 問題のモデルクラス
 class Question(models.Model):
     CATEGORY_CHOICES = (
         ('integer_calculation', '整数計算'),
