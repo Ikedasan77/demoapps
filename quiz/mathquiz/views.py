@@ -14,17 +14,23 @@ def quiz_view(request):
             question_id = request.POST.get(f'question_id_{i}')
             if question_id is None:
                 continue  # 問題IDが取得できない場合はスキップ
-            question_id = int(question_id)
-            question = Question.objects.get(id=question_id)  # 問題をデータベースから取得
+
+            # 問題をデータベースから取得
+            try:
+                question = Question.objects.get(id=int(question_id))
+            except (Question.DoesNotExist, ValueError):
+                continue  # 問題が見つからない、またはIDが無効な場合はスキップ
+
             questions.append(question)  # 出題された問題をリストに追加
 
-            if user_answer_str is None or user_answer_str == '':
-                # 空欄の回答はNoneとして扱い、間違えとしてカウント
+            # 空欄の回答はNoneとして扱い、間違えとしてカウント
+            if not user_answer_str:
                 wrong_questions.append(question)
                 continue
 
+            # ユーザーの解答を整数に変換して正解判定
             try:
-                user_answer = int(user_answer_str)  # ユーザーの解答を整数に変換
+                user_answer = int(user_answer_str)
                 if user_answer == question.correct_answer:  # 正解かどうかを判定
                     score += 1
                 else:
@@ -43,9 +49,15 @@ def quiz_view(request):
         })
 
     else:  # GETリクエスト（クイズ開始時）の場合
-        questions = list(Question.objects.all())  # すべての問題を取得
-        selected_questions = random.sample(questions, 10)  # ランダムに10問選択
-        return render(request, 'mathquiz/quiz.html', {'questions': selected_questions})  # クイズページを表示
+        # すべての問題を取得
+        questions = list(Question.objects.all())
+        num_questions = 10  # 表示する問題数
+        sample_size = min(num_questions, len(questions))  # サンプル数を制限
+
+        # ランダムに選択した問題をテンプレートに渡す
+        selected_questions = random.sample(questions, sample_size)
+
+        return render(request, 'mathquiz/quiz.html', {'questions': selected_questions})
 
 # 正解数に応じたアドバイスを返す関数
 def get_advice(score):
@@ -54,6 +66,6 @@ def get_advice(score):
     elif score >= 7:
         return "よくできました！間違えた問題についてはなぜ間違えたか解説を読んで確認してみてください。"
     elif score >= 4:
-        return "頑張りましたね！分数やる以上の計算など同じ間違いを繰り返しているようなら、その部分だけでも基本に立ち返りましょう。"
+        return "頑張りましたね！同じ間違いを繰り返しているようなら、基本に立ち返って復習しましょう。"
     else:
-        return "１度教科書を読み返したり、学校や塾の先生に解き方を教えてもらったらここに戻ってきて問題解いてみてください。必ず前回よりできるようになっているはずです、。"
+        return "教科書を読み返したり、学校や塾の先生に解き方を教えてもらい、もう一度挑戦してください。必ず前回よりできるようになっているはずです。"
