@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-    <title>計算アプリ - 正負の数編</title>
+    <title>計算アプリ</title>
     <script type="text/javascript" async
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
     </script>  <!-- MathJaxライブラリを読み込んでLaTeX形式の数式をレンダリング -->
@@ -42,7 +42,7 @@
             padding: 15px;
             border-radius: 10px;
             width: 80%; /* 全ての問題の横の長さを統一 */
-            background-image: url('{% static "tegakinote.png" %}'); /* 問題の背景に画像を追加 */
+            background-image: url('{% static "mathquiz/images/tegakinote.png" %}'); /* 問題の背景に画像を追加 */
             background-size: cover;
             background-repeat: no-repeat;
         }
@@ -55,8 +55,12 @@
         }
     </style>
 </head>
-<body onload="startCountdown()">  <!-- ページが読み込まれたら自動的にカウントダウンを開始 -->
-    <h1 class="text-center text-3xl font-bold mt-10">計算アプリ　正負の数編</h1>
+<body>
+    <div class="flex justify-center items-center mt-10">
+        <h1 class="text-3xl font-bold">計算アプリ　正負の数編</h1>
+        <button onclick="playMusic()" class="ml-4 bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">🎺 音楽を鳴らす</button>
+    </div>
+
     <div id="timer" class="text-center text-lg mt-4">残り時間: 60秒</div> <!-- タイマーの表示 -->
 
     <div class="quiz-container">
@@ -73,32 +77,14 @@
         </form>
     </div>
 
-    <!-- JavaScriptでタイマーと音声を実装 -->
+    <!-- 音楽再生用のJavaScript -->
     <script>
-        let countdownInterval;
-        let timerDuration = 60; // カウントダウンの秒数（1分）
+        // 音声ファイルの定義
+        let musicAudio = new Audio("{% static 'mathquiz/static/audio/music.mp3' %}");  // ラッパ音の音声
 
-        // 音声ファイルの定義（staticフォルダ内のパスを指定）
-        let countdownAudio = new Audio("{% static 'thinkingtime2.mp3' %}");  // カウントダウン開始時の音声
-        let endAudio = new Audio("{% static 'soundeffects/end_bell.mp3' %}");  // カウントダウン終了時の音声
-
-        function startCountdown() {
-            let remainingTime = timerDuration;
-            document.getElementById("timer").innerText = `残り時間: ${remainingTime}秒`;
-
-            // タイマー開始時に音声を再生
-            countdownAudio.play();
-
-            countdownInterval = setInterval(() => {
-                remainingTime--;
-                document.getElementById("timer").innerText = `残り時間: ${remainingTime}秒`;
-
-                if (remainingTime <= 0) {
-                    clearInterval(countdownInterval);
-                    document.getElementById("timer").innerText = "時間切れです！";
-                    endAudio.play();  // カウントダウン終了時の音声を再生
-                }
-            }, 1000);
+        // 音楽を再生する関数
+        function playMusic() {
+            musicAudio.play();
         }
     </script>
 </body>

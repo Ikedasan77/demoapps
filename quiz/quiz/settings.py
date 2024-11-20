@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'mathquiz'
+    'mathquiz' # 作成したアプリケーション名が含まれているか確認
 ]
 
 MIDDLEWARE = [
@@ -122,7 +122,7 @@ STATIC_URL = '/static/'
 
 # 静的ファイルの格納場所を指定
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'math_quiz', 'static'),
+    os.path.join(BASE_DIR, 'mathquiz', 'static'),  # 正しいディレクトリパスを指定
 ]
 
 # Default primary key field type

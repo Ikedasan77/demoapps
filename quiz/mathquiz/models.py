@@ -9,7 +9,7 @@ class Category(models.Model):
 
 # 問題のモデルクラス
 class Question(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)  # カテゴリモデルとの外部キー関係
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='questions')  # カテゴリモデルとの外部キー関係
     text = models.CharField(max_length=255)  # 問題文
     correct_answer = models.IntegerField()  # 正解の数値（整数計算用）
     explanation = models.TextField()  # 解説文
