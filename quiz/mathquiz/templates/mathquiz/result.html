@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="icon" href="{% static 'favicon.ico' %}">  <!-- ファビコンのリンクを追加 -->
     <title>計算アプリ - 結果</title>
     <script type="text/javascript" async
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
@@ -72,11 +73,13 @@
     </style>
 </head>
 <body>
+    <div class="flex justify-center items-center mt-10">
+        <h1 class="text-3xl font-bold">計算アプリ - 結果</h1>
+        <button onclick="playMusic()" class="ml-4 bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">🎺 音楽を鳴らす</button>
+    </div>
+
     <div class="result-container">
         <h2 class="text-2xl font-bold text-center mb-6">結果</h2>
-
-        <!-- 音声をバックグラウンドで再生するためのaudio要素 -->
-        <audio id="backgroundAudio" src="{% static 'audio/pythagoras-free1.mp3' %}" loop autoplay></audio>
 
         <!-- 正解・不正解のマルとバツの表示欄 -->
         <div class="chalkboard">
@@ -130,10 +133,15 @@
         </div>
     </div>
 
+    <!-- 音楽再生用のJavaScript -->
     <script>
-        // 音量を設定（バックグラウンドでの処理）
-        const audio = document.getElementById('backgroundAudio');
-        audio.volume = 0.1;  // 音量を設定 (0.0 から 1.0 の範囲で指定可能)
+        // 音声ファイルの定義
+        let musicAudio = new Audio("{% static 'mathquiz/static/audio/music.mp3' %}");  // ラッパ音の音声
+
+        // 音楽を再生する関数
+        function playMusic() {
+            musicAudio.play();
+        }
 
         function handleLike(questionId) {
             const likeButton = document.getElementById(`like-button-${questionId}`);
