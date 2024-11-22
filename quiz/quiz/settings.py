@@ -117,13 +117,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-# 静的ファイルのURL
-STATIC_URL = '/static/'
-
-# 静的ファイルの格納場所を指定
+STATIC_URL = '/static/'  # 静的ファイルのURL
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'mathquiz', 'static'),  # 正しいディレクトリパスを指定
+    BASE_DIR / 'mathquiz/static',  # プロジェクト内の静的ファイルディレクトリ
 ]
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # collectstaticコマンドで収集される静的ファイルの保存先tatic'),  # 正しいディレクトリパスを指定
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
