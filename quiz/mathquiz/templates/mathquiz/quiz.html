@@ -1,25 +1,92 @@
+{% load static %}  <!-- Djangoの静的ファイル読み込みを使う -->
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>計算アプリ - 正負の数編</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="icon" href="{% static 'favicon.ico' %}">  <!-- ファビコンのリンクを追加 -->
+    <title>計算アプリ</title>
     <script type="text/javascript" async
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
     </script>  <!-- MathJaxライブラリを読み込んでLaTeX形式の数式をレンダリング -->
+    <style>
+        body {
+            background-color: #e0f7fa;
+            background-image: url('{% static "images/studygirl_quiz_v1.png" %}'); /* 子供のイラストの背景 */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .quiz-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 40px auto;
+            text-align: center;
+        }
+        .question-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+        .question {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0;
+            background-color: #a5d6a7; /* 視認性を向上するために背景色を濃いめに変更 */
+            padding: 15px;
+            border-radius: 10px;
+            width: 80%; /* 全ての問題の横の長さを統一 */
+            background-image: url('{% static "mathquiz/images/background_notebook_quiz_v1.png" %}'); /* 問題の背景に画像を追加 */
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+        input[type="number"] {
+            width: 20%; /* 回答欄の幅を狭くする */
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            height: 64px; /* 問題と回答欄の高さを統一 */
+        }
+    </style>
 </head>
 <body>
-    <h1>計算アプリ　正負の数編</h1>
-    <form method="post">
-        {% csrf_token %}  <!-- CSRFトークンを追加（セキュリティ対策） -->
-        {% for question in questions %}
-            <div style="display: flex; align-items: center;">
-                <p style="outline: none; margin-right: 10px;">\( \displaystyle {{ question.text }} \)</p>  <!-- MathJaxでLaTeX形式の数式を表示し、枠囲みをなくす -->
-                <input type="number" name="answer_{{ forloop.counter0 }}" style="margin-left: 10px;">  <!-- 枠囲みを表示した回答欄 -->
-                <input type="hidden" name="question_id_{{ forloop.counter0 }}" value="{{ question.id }}">  <!-- 問題のIDを隠しフィールドで送信 -->
-            </div>
-        {% endfor %}
-        <button type="submit">回答を送信</button>  <!-- 解答を送信するボタン -->
-    </form>
+    <div class="flex justify-center items-center mt-10">
+        <h1 class="text-3xl font-bold">計算アプリ</h1>
+        <button onclick="playMusic()" class="ml-4 bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">🎺 音楽を鳴らす</button>
+    </div>
+
+    <div id="timer" class="text-center text-lg mt-4">残り時間: 60秒</div> <!-- タイマーの表示 -->
+
+    <div class="quiz-container">
+        <form method="post">
+            {% csrf_token %}  <!-- CSRFトークンを追加（セキュリティ対策） -->
+            {% for question in questions %}
+                <div class="question-container"> <!-- 問題と解答欄のコンテナ -->
+                    <p class="question">({{ forloop.counter }}) \( \displaystyle {{ question.text }} \)</p>  <!-- 出題順に番号を追加 -->
+                    <input type="number" name="answer_{{ forloop.counter0 }}">  <!-- 回答欄のサイズを小さく変更 -->
+                    <input type="hidden" name="question_id_{{ forloop.counter0 }}" value="{{ question.id }}">  <!-- 問題のIDを隠しフィールドで送信 -->
+                </div>
+            {% endfor %}
+            <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">回答を送信</button>  <!-- 解答を送信するボタン -->
+        </form>
+    </div>
+
+    <!-- 音楽再生用のJavaScript -->
+    <script>
+        // 音声ファイルの定義
+        let musicAudio = new Audio("{% static 'audio/quiz_timer_cd_v2.mp3' %}");  // ラッパ音の音声
+
+        // 音楽を再生する関数
+        function playMusic() {
+            musicAudio.play();
+        }
+    </script>
 </body>
 </html>

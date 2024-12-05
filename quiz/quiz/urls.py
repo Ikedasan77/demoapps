@@ -16,9 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 # プロジェクト全体のURLパターンを定義
 urlpatterns = [
     path('admin/', admin.site.urls),  # 管理サイトのURL
     path('', include('mathquiz.urls')),  # mathquizのURLを含める
 ]
+
+# 静的ファイルを開発環境で提供するための設定
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
