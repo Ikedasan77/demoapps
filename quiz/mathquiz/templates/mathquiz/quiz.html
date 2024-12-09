@@ -69,7 +69,7 @@
             {% csrf_token %}  <!-- CSRFトークンを追加（セキュリティ対策） -->
             {% for question in questions %}
                 <div class="question-container"> <!-- 問題と解答欄のコンテナ -->
-                    <p class="question">({{ forloop.counter }}) \( \displaystyle {{ question.text }} \)</p>  <!-- 出題順に番号を追加 -->
+                    <p class="question">{{ forloop.counter }}. {{ question.text }}</p>  <!-- 出題順に番号を追加 -->
                     <input type="number" name="answer_{{ forloop.counter0 }}">  <!-- 回答欄のサイズを小さく変更 -->
                     <input type="hidden" name="question_id_{{ forloop.counter0 }}" value="{{ question.id }}">  <!-- 問題のIDを隠しフィールドで送信 -->
                 </div>

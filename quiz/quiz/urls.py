@@ -23,6 +23,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),  # 管理サイトのURL
     path('', include('mathquiz.urls')),  # mathquizのURLを含める
+    static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 ]
 
 # 静的ファイルを開発環境で提供するための設定
