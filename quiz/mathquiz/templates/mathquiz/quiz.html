@@ -14,7 +14,11 @@
     <style>
         body {
             background-color: #e0f7fa;
+<<<<<<< HEAD
             background-image: url('{% static "images/studygirl_quiz_v1.png" %}'); /* 子供のイラストの背景 */
+=======
+            background-image: url('{% static "mathquiz/images/tegakinote.png" %}'); /* 子供たちのイラストの背景 */
+>>>>>>> ebc0ee4d8e55576c6803af48f94dc3286badc896
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
@@ -43,7 +47,11 @@
             padding: 15px;
             border-radius: 10px;
             width: 80%; /* 全ての問題の横の長さを統一 */
+<<<<<<< HEAD
             background-image: url('{% static "mathquiz/images/background_notebook_quiz_v1.png" %}'); /* 問題の背景に画像を追加 */
+=======
+            background-image: url('{% static "mathquiz/images/tegakinote.png" %}'); /* 問題の背景に画像を追加 */
+>>>>>>> ebc0ee4d8e55576c6803af48f94dc3286badc896
             background-size: cover;
             background-repeat: no-repeat;
         }
@@ -69,7 +77,11 @@
             {% csrf_token %}  <!-- CSRFトークンを追加（セキュリティ対策） -->
             {% for question in questions %}
                 <div class="question-container"> <!-- 問題と解答欄のコンテナ -->
+<<<<<<< HEAD
                     <p class="question">{{ forloop.counter }}. {{ question.text }}</p>  <!-- 出題順に番号を追加 -->
+=======
+                    <p class="question">({{ forloop.counter }}) \( \displaystyle {{ question.text }} \)</p>  <!-- 出題順に番号を追加 -->
+>>>>>>> ebc0ee4d8e55576c6803af48f94dc3286badc896
                     <input type="number" name="answer_{{ forloop.counter0 }}">  <!-- 回答欄のサイズを小さく変更 -->
                     <input type="hidden" name="question_id_{{ forloop.counter0 }}" value="{{ question.id }}">  <!-- 問題のIDを隠しフィールドで送信 -->
                 </div>
@@ -81,7 +93,11 @@
     <!-- 音楽再生用のJavaScript -->
     <script>
         // 音声ファイルの定義
+<<<<<<< HEAD
         let musicAudio = new Audio("{% static 'audio/quiz_timer_cd_v2.mp3' %}");  // ラッパ音の音声
+=======
+        let musicAudio = new Audio("{% static 'mathquiz/static/audio/thinkingtime10.mp3' %}");  // ラッパ音の音声
+>>>>>>> ebc0ee4d8e55576c6803af48f94dc3286badc896
 
         // 音楽を再生する関数
         function playMusic() {

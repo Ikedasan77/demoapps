@@ -118,11 +118,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'  # 静的ファイルのURL
+<<<<<<< HEAD
 
 STATICFILES_DIRS = [
     BASE_DIR / 'mathquiz/static',  # プロジェクト内の静的ファイルディレクトリ
 ]
 
+=======
+STATICFILES_DIRS = [
+    BASE_DIR / 'mathquiz/static',  # プロジェクト内の静的ファイルディレクトリ
+]
+>>>>>>> ebc0ee4d8e55576c6803af48f94dc3286badc896
 STATIC_ROOT = BASE_DIR / 'staticfiles'  # collectstaticコマンドで収集される静的ファイルの保存先tatic'),  # 正しいディレクトリパスを指定
 
 

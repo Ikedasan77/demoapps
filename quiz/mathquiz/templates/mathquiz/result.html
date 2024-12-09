@@ -14,7 +14,11 @@
     <style>
         body {
             background-color: #e0f7fa;
+<<<<<<< HEAD
             background-image: url('{% static "images/background_notebook_quiz_v1.png" %}'); /* 手書き風の文房具のパターン */
+=======
+            background-image: url('{% static "stationery-pattern.png" %}'); /* 手書き風の文房具のパターン */
+>>>>>>> ebc0ee4d8e55576c6803af48f94dc3286badc896
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -26,7 +30,11 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             max-width: 800px;
             margin: 40px auto;
+<<<<<<< HEAD
             background-image: url('{% static "images/background_notebook_quiz_v1.png" %}'); /* 控えめに散りばめられた手書き風の文房具 */
+=======
+            background-image: url('{% static "stationery-pattern-light.png" %}'); /* 控えめに散りばめられた手書き風の文房具 */
+>>>>>>> ebc0ee4d8e55576c6803af48f94dc3286badc896
             background-size: 150px;
             background-repeat: repeat;
         }
@@ -38,7 +46,11 @@
             border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             border: 12px solid #5a3311; /* 木の枠の色を強めに変更 */
+<<<<<<< HEAD
             background-image: url('{% static "images/wood-texture.jpg" %}'); /* 木の素材感を追加 */
+=======
+            background-image: url('{% static "wood-texture.jpg" %}'); /* 木の素材感を追加 */
+>>>>>>> ebc0ee4d8e55576c6803af48f94dc3286badc896
             background-size: cover;
             margin-bottom: 20px;
         }
@@ -53,7 +65,11 @@
             align-items: center;
         }
         .like-button:active {
+<<<<<<< HEAD
             transform: scale(0.7); /* 押されたようなアニメーション */
+=======
+            transform: scale(0.95); /* 押されたようなアニメーション */
+>>>>>>> ebc0ee4d8e55576c6803af48f94dc3286badc896
         }
         .response-section {
             margin-top: 10px;
@@ -85,6 +101,7 @@
         <div class="chalkboard">
             <h3 class="text-xl font-bold mb-4">あなたの回答結果</h3>
             <ul>
+<<<<<<< HEAD
                 {% for question in questions %}
                     <li>
                         \( \displaystyle {{ question.text }} \) = {{ question.correct_answer }}
@@ -97,6 +114,20 @@
                         </span>
                     </li>
                 {% endfor %}
+=======
+            {% for question in questions %}
+                <li>
+                    \( \displaystyle {{ question.text }} \) = {{ question.correct_answer }}
+                    <span>
+                        {% if question.is_correct %}
+                            <span style="color: #a5d6a7; font-weight: bold;">⭕ 正解</span>
+                        {% else %}
+                            <span style="color: #ffcdd2; font-weight: bold;">❌ 不正解</span>
+                        {% endif %}
+                    </span>
+                </li>
+            {% endfor %}
+>>>>>>> ebc0ee4d8e55576c6803af48f94dc3286badc896
             </ul>
         </div>
 
@@ -136,7 +167,11 @@
     <!-- 音楽再生用のJavaScript -->
     <script>
         // 音声ファイルの定義
+<<<<<<< HEAD
         let musicAudio = new Audio("{% static 'audio/pythagoras-free1.mp3' %}");  // ラッパ音の音声
+=======
+        let musicAudio = new Audio("{% static 'mathquiz/static/audio/music.mp3' %}");  // ラッパ音の音声
+>>>>>>> ebc0ee4d8e55576c6803af48f94dc3286badc896
 
         // 音楽を再生する関数
         function playMusic() {
