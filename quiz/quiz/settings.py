@@ -56,7 +56,7 @@ ROOT_URLCONF = 'quiz.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],  # カスタムテンプレートのパス
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -70,7 +70,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'quiz.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -118,19 +117,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'  # 静的ファイルのURL
-<<<<<<< HEAD
 
 STATICFILES_DIRS = [
     BASE_DIR / 'mathquiz/static',  # プロジェクト内の静的ファイルディレクトリ
 ]
 
-=======
-STATICFILES_DIRS = [
-    BASE_DIR / 'mathquiz/static',  # プロジェクト内の静的ファイルディレクトリ
-]
->>>>>>> ebc0ee4d8e55576c6803af48f94dc3286badc896
 STATIC_ROOT = BASE_DIR / 'staticfiles'  # collectstaticコマンドで収集される静的ファイルの保存先tatic'),  # 正しいディレクトリパスを指定
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
