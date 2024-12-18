@@ -31,32 +31,45 @@
             text-align: center;
         }
         .question-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 15px;
-            width: 100%;
-        }
-        .question {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 0;
-            background-color: #a5d6a7; /* 視認性を向上するために背景色を濃いめに変更 */
-            padding: 15px;
-            border-radius: 10px;
-            width: 80%; /* 全ての問題の横の長さを統一 */
-            background-image: url('{% static "mathquiz/images/background_notebook_quiz_v1.png" %}'); /* 問題の背景に画像を追加 */
-            background-image: url('{% static "mathquiz/images/tegakinote.png" %}'); /* 問題の背景に画像を追加 */
-            background-size: cover;
-            background-repeat: no-repeat;
-        }
-        input[type="number"] {
-            width: 20%; /* 回答欄の幅を狭くする */
-            padding: 15px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            height: 64px; /* 問題と回答欄の高さを統一 */
-        }
+        display: flex; /* 横並び */
+        align-items: center; /* 垂直方向に中央揃え */
+        margin-bottom: 15px;
+        background-color: #a5d6a7; /* 薄緑色の背景 */
+        border-radius: 10px;
+        padding: 10px; /* 内側の余白 */
+    }
+
+    .question-number {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-right: 10px; /* 番号と問題文の間隔 */
+    }
+
+    .question-text {
+        font-size: 1.2rem;
+        text-align: left; /* 左揃え */
+    }
+
+    input[type="number"] {
+        margin-left: auto; /* 回答欄を右端に配置 */
+        width: 20%;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .question {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 0;
+        padding: 20px;  /* 十分な余白を追加 */
+        background-color: #a5d6a7; /* 薄緑色の背景 */
+        border-radius: 10px;
+        text-align: center;
+        box-sizing: border-box; /* 枠内にコンテンツを収める */
+        width: 100%; /* 親要素幅いっぱいに表示 */
+    }
+
     </style>
 </head>
 <body>
@@ -69,27 +82,28 @@
 
     <div class="quiz-container">
         <form method="post">
-            {% csrf_token %}  <!-- CSRFトークンを追加（セキュリティ対策） -->
+            {% csrf_token %} <!-- CSRFトークンを追加（セキュリティ対策） -->
             {% for question in questions %}
                 <div class="question-container"> <!-- 問題と解答欄のコンテナ -->
-
-                    <p class="question">{{ forloop.counter }}. {{ question.text }}</p>  <!-- 出題順に番号を追加 -->
-                    <p class="question">({{ forloop.counter }}) \( \displaystyle {{ question.text }} \)</p>  <!-- 出題順に番号を追加 -->
-                    <input type="number" name="answer_{{ forloop.counter0 }}">  <!-- 回答欄のサイズを小さく変更 -->
-                    <input type="hidden" name="question_id_{{ forloop.counter0 }}" value="{{ question.id }}">  <!-- 問題のIDを隠しフィールドで送信 -->
+                    <span class="question-number">({{ forloop.counter }})</span> <!-- 問題番号 -->
+                    <p class="question-text">\( \displaystyle {{ question.text }} \)</p> <!-- 問題文 -->
+                    <input type="number" name="answer_{{ forloop.counter0 }}" 
+                           class="answer-input w-1/4 px-3 py-2 border border-gray-300 rounded">
+                    <input type="hidden" name="question_id_{{ forloop.counter0 }}" value="{{ question.id }}">
                 </div>
             {% endfor %}
-            <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">回答を送信</button>  <!-- 解答を送信するボタン -->
+            <div class="text-center mt-6">
+                <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
+                    回答を送信
+                </button>
+            </div>
         </form>
     </div>
 
     <!-- 音楽再生用のJavaScript -->
     <script>
-
-// 音声ファイルの定義
         let musicAudio = new Audio("{% static 'audio/thinkingtime2.mp3' %}");  // ラッパ音の音声
 
-        // 音楽を再生する関数
         function playMusic() {
             musicAudio.play();
         }
