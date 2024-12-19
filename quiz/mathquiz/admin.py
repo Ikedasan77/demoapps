@@ -44,3 +44,10 @@ class QuestionAdmin(admin.ModelAdmin):
             "fields": ("explanation", "algebra_expression", "root_value")
         }),
     )
+
+    # Mediaクラスを追加してJavaScriptを読み込み
+    class Media:
+        js = [
+            'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js',  # MathJaxライブラリ
+            'admin/js/latex_preview.js',  # ローカルのプレビュー用スクリプト
+        ]

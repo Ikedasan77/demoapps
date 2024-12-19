@@ -14,14 +14,27 @@
 {% block extrahead %}
     {{ block.super }}  <!-- デフォルトの設定を保持 -->
 
-    <!-- MathJaxスクリプトの読み込み -->
-    <script type="text/javascript" async
-        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
-    </script>
-    <script>
+   <!-- MathJaxスクリプトの読み込み -->
+<script type="text/javascript" async
+src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
+</script>
+
+<!-- latex_preview.js の読み込み -->
+<script type="text/javascript" src="{% static 'admin/js/latex_preview.js' %}"></script>
+
+        // MathJaxのカスタム設定
         MathJax = {
             tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]  <!-- インライン数式記法 -->
+                // インライン数式記法 ($...$ と \(...\) を使用可能にする)
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                // 数式のディスプレイモード設定
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            options: {
+                // タイムアウトを設定してページの読み込み遅延を防止
+                renderActions: {
+                    addMenu: [0, '', '']
+                }
             }
         };
     </script>
@@ -47,6 +60,15 @@
 
         #site-name a:hover {
             color: #005b99; /* 濃い青 */
+        }
+
+        /* MathJaxプレビュー用のスタイル */
+        .mathjax-preview {
+            margin-top: 10px;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
         }
     </style>
 {% endblock %}
