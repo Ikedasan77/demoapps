@@ -14,30 +14,26 @@
 {% block extrahead %}
     {{ block.super }}  <!-- デフォルトの設定を保持 -->
 
-   <!-- MathJaxスクリプトの読み込み -->
-<script type="text/javascript" async
-src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
-</script>
-
-<!-- latex_preview.js の読み込み -->
-<script type="text/javascript" src="{% static 'admin/js/latex_preview.js' %}"></script>
-
-        // MathJaxのカスタム設定
+    <!-- MathJaxのカスタム設定とスクリプトの読み込み -->
+    <script type="text/javascript">
         MathJax = {
             tex: {
-                // インライン数式記法 ($...$ と \(...\) を使用可能にする)
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                // 数式のディスプレイモード設定
-                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+                inlineMath: [['$', '$'], ['\\(', '\\)']],  // インライン数式
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]  // ブロック数式
             },
             options: {
-                // タイムアウトを設定してページの読み込み遅延を防止
                 renderActions: {
-                    addMenu: [0, '', '']
+                    addMenu: [0, '', '']  // メニューオプション無効化（高速化のため）
                 }
             }
         };
     </script>
+    <script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
+    </script>
+
+    <!-- latex_preview.js の読み込み -->
+    <script type="text/javascript" src="{% static 'admin/js/latex_preview.js' %}"></script>
 
     <!-- カスタムスタイル -->
     <style>
