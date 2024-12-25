@@ -29,6 +29,7 @@
             text-align: center;
         }
         .question-container {
+<<<<<<< HEAD
             display: flex; /* 横並び */
             align-items: center; /* 垂直方向に中央揃え */
             margin-bottom: 15px;
@@ -52,6 +53,47 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+=======
+        display: flex; /* 横並び */
+        align-items: center; /* 垂直方向に中央揃え */
+        margin-bottom: 15px;
+        background-color: #a5d6a7; /* 薄緑色の背景 */
+        border-radius: 10px;
+        padding: 10px; /* 内側の余白 */
+    }
+
+    .question-number {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-right: 10px; /* 番号と問題文の間隔 */
+    }
+
+    .question-text {
+        font-size: 1.2rem;
+        text-align: left; /* 左揃え */
+    }
+
+    input[type="number"] {
+        margin-left: auto; /* 回答欄を右端に配置 */
+        width: 20%;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .question {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 0;
+        padding: 20px;  /* 十分な余白を追加 */
+        background-color: #a5d6a7; /* 薄緑色の背景 */
+        border-radius: 10px;
+        text-align: center;
+        box-sizing: border-box; /* 枠内にコンテンツを収める */
+        width: 100%; /* 親要素幅いっぱいに表示 */
+    }
+
+>>>>>>> c1c1013eb612b1e94060b9455d035cba6de5f88e
     </style>
 </head>
 <body>
@@ -84,8 +126,12 @@
 
     <!-- 音楽再生用のJavaScript -->
     <script>
+<<<<<<< HEAD
         let musicAudio = new Audio("{% static 'audio/thinkingtime2.mp3' %}");
         musicAudio.volume = 0.75; // 音量を0.75に設定
+=======
+        let musicAudio = new Audio("{% static 'audio/thinkingtime2.mp3' %}");  // ラッパ音の音声
+>>>>>>> c1c1013eb612b1e94060b9455d035cba6de5f88e
 
         function playMusic() {
             musicAudio.play();
