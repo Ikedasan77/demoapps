@@ -7,76 +7,95 @@ def home(request):
     """
     トップページを表示するビュー。
     """
-    return render(request, 'mathquiz/home.html')  # `home.html` テンプレートを表示
+    return render(request, 'mathquiz/home.html')  # トップページ用テンプレートを表示
+
 
 # 問題表示ビュー（GET専用）
 def quiz_view(request):
     """
     問題を表示するビュー。
-    GETリクエストの場合にランダムな10問を取得してテンプレートに渡す。
+    ランダムに10問を取得してテンプレートに渡します。
     """
     if request.method == 'GET':  # GETリクエストの場合
-        questions = list(Question.objects.all())  # 全ての問題を取得
-        num_questions = 10
+        questions = list(Question.objects.all())  # データベースからすべての問題を取得
+        num_questions = 10  # 出題する問題数
         selected_questions = random.sample(questions, min(num_questions, len(questions)))  # ランダムに10問選択
 
         # 選択した問題をテンプレートに渡す
         return render(request, 'mathquiz/quiz.html', {'questions': selected_questions})
 
-    # GET以外のリクエストの場合、問題画面にリダイレクト
+    # GET以外のリクエストはクイズ画面にリダイレクト
     return redirect('quiz')
+
 
 # 解答処理ビュー（POST専用）
 def submit_quiz_view(request):
     """
-    解答を処理してスコアを計算し、結果をテンプレートに渡すビュー。
-    POSTリクエストを受け取り、回答を採点し、結果画面を表示する。
+    解答を処理するビュー。
+    解答を採点し、結果をテンプレートに渡すための処理を行います。
     """
-    if request.method == 'POST':  # POSTリクエストの場合
+    if request.method == 'POST':  # POSTリクエストのみ処理
         score = 0  # 正解数を初期化
         wrong_questions = []  # 間違えた問題のリスト
-        questions = []  # 出題された問題のリストを保持
+        questions = []  # 出題された問題をリストに保持
 
-        # 解答の処理
-        for i in range(10):
-            user_answer_str = request.POST.get(f'answer_{i}')  # 回答の取得
-            question_id = request.POST.get(f'question_id_{i}')  # 問題IDの取得
+        # ユーザーの解答を処理
+        for i in range(10):  # 最大10問の解答を処理
+            user_answer_str = request.POST.get(f'answer_{i}')  # 回答内容を取得
+            question_id = request.POST.get(f'question_id_{i}')  # 問題IDを取得
 
-            if not question_id:  # 問題IDが存在しない場合はスキップ
+            if not question_id:  # 問題IDが存在しない場合スキップ
                 continue
 
             try:
-                question = Question.objects.get(id=int(question_id))
+                question_id = int(question_id)  # IDを整数に変換
+                question = Question.objects.get(id=question_id)  # データベースから該当問題を取得
                 questions.append(question)  # 出題された問題をリストに追加
-            except (Question.DoesNotExist, ValueError):  # 問題が存在しない場合スキップ
+            except (Question.DoesNotExist, ValueError):  # 問題が見つからない場合またはIDが不正な場合
                 continue
 
             # 回答を判定
-            if user_answer_str:  # 回答が存在する場合
+            if user_answer_str:  # 回答が入力されている場合
                 try:
-                    user_answer = int(user_answer_str)
-                    if user_answer == question.correct_answer:  # 正解の場合
-                        score += 1
+                    user_answer = int(user_answer_str)  # 回答を整数に変換
+                    if user_answer == question.correct_answer:  # 正解と比較
+                        score += 1  # 正解数を加算
                     else:
-                        wrong_questions.append(question)  # 不正解の場合
-                except ValueError:
-                    wrong_questions.append(question)  # 数値に変換できない場合も不正解扱い
+                        wrong_questions.append(question)  # 不正解の問題を記録
+                except ValueError:  # 数値変換エラーの場合
+                    wrong_questions.append(question)  # 不正解として記録
             else:
-                wrong_questions.append(question)  # 未回答も不正解扱い
+                wrong_questions.append(question)  # 未回答も不正解として記録
 
-        # 結果画面にレンダリング
-        return render(request, 'mathquiz/result.html', {
-            'score': score,
-            'wrong_questions': wrong_questions,
-            'questions': questions
-        })
+        # セッションに結果を保存
+        request.session['score'] = score  # スコアをセッションに保存
+        request.session['wrong_questions'] = [q.id for q in wrong_questions]  # 間違えた問題のIDを保存
+        request.session['questions'] = [q.id for q in questions]  # 出題された問題のIDを保存
 
-    # POST以外のリクエストの場合、問題画面にリダイレクト
+        # 結果画面にリダイレクト
+        return redirect('result')
+
+    # POST以外のリクエストはクイズ画面にリダイレクト
     return redirect('quiz')
+
 
 # 結果表示ビュー
 def result_view(request):
     """
-    結果画面用のビュー。
+    結果画面を表示するビュー。
+    セッションに保存されたスコアや間違えた問題をテンプレートに渡します。
     """
-    return render(request, 'mathquiz/result.html')
+    score = request.session.get('score')  # セッションからスコアを取得
+    wrong_question_ids = request.session.get('wrong_questions', [])  # セッションから間違えた問題のIDを取得
+    questions_ids = request.session.get('questions', [])  # セッションから出題された問題のIDを取得
+
+    # データベースから問題を取得
+    wrong_questions = Question.objects.filter(id__in=wrong_question_ids)  # 間違えた問題
+    questions = Question.objects.filter(id__in=questions_ids)  # 出題された問題
+
+    # 結果をテンプレートに渡してレンダリング
+    return render(request, 'mathquiz/result.html', {
+        'score': score,  # スコア
+        'wrong_questions': wrong_questions,  # 間違えた問題の詳細
+        'questions': questions  # 出題された問題の詳細
+    })

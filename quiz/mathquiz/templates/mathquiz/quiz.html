@@ -15,8 +15,6 @@
         body {
             background-color: #e0f7fa;
             background-image: url('{% static "images/studygirl_quiz_v1.png" %}'); /* 子供のイラストの背景 */
-
-            background-image: url('{% static "images/tegakinote.png" %}'); /* 子供たちのイラストの背景 */
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
@@ -31,45 +29,29 @@
             text-align: center;
         }
         .question-container {
-        display: flex; /* 横並び */
-        align-items: center; /* 垂直方向に中央揃え */
-        margin-bottom: 15px;
-        background-color: #a5d6a7; /* 薄緑色の背景 */
-        border-radius: 10px;
-        padding: 10px; /* 内側の余白 */
-    }
-
-    .question-number {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-right: 10px; /* 番号と問題文の間隔 */
-    }
-
-    .question-text {
-        font-size: 1.2rem;
-        text-align: left; /* 左揃え */
-    }
-
-    input[type="number"] {
-        margin-left: auto; /* 回答欄を右端に配置 */
-        width: 20%;
-        padding: 5px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-
-    .question {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-bottom: 0;
-        padding: 20px;  /* 十分な余白を追加 */
-        background-color: #a5d6a7; /* 薄緑色の背景 */
-        border-radius: 10px;
-        text-align: center;
-        box-sizing: border-box; /* 枠内にコンテンツを収める */
-        width: 100%; /* 親要素幅いっぱいに表示 */
-    }
-
+            display: flex; /* 横並び */
+            align-items: center; /* 垂直方向に中央揃え */
+            margin-bottom: 15px;
+            background-color: #a5d6a7; /* 薄緑色の背景 */
+            border-radius: 10px;
+            padding: 10px; /* 内側の余白 */
+        }
+        .question-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-right: 10px; /* 番号と問題文の間隔 */
+        }
+        .question-text {
+            font-size: 1.2rem;
+            text-align: left; /* 左揃え */
+        }
+        input[type="number"] {
+            margin-left: auto; /* 回答欄を右端に配置 */
+            width: 20%;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -102,11 +84,25 @@
 
     <!-- 音楽再生用のJavaScript -->
     <script>
-        let musicAudio = new Audio("{% static 'audio/thinkingtime2.mp3' %}");  // ラッパ音の音声
+        let musicAudio = new Audio("{% static 'audio/thinkingtime2.mp3' %}");
+        musicAudio.volume = 0.75; // 音量を0.75に設定
 
         function playMusic() {
             musicAudio.play();
         }
+
+        // タイマー機能
+        let timer = 60; // 初期値60秒
+        const timerElement = document.getElementById('timer');
+        const interval = setInterval(() => {
+            timer--;
+            timerElement.textContent = `残り時間: ${timer}秒`;
+            if (timer <= 0) {
+                clearInterval(interval); // タイマーを停止
+                timerElement.textContent = '時間切れ!';
+                document.querySelector('form').submit(); // 自動的にフォーム送信
+            }
+        }, 1000); // 1秒ごとにカウントダウン
     </script>
 </body>
 </html>
