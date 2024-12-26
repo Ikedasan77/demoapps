@@ -114,25 +114,33 @@
         </div>
 
         {% if wrong_questions %}
-            <!-- 間違えた問題と解説 -->
-            <div class="chalkboard">
-                <h3 class="text-xl font-bold mb-4">間違えた問題と解説</h3>
-                <ul>
-                {% for question in wrong_questions %}
-                    <li><strong>\( \displaystyle {{ question.text }} \)</strong><br>解説: {{ question.explanation }}
-                        <button class="like-button" id="like-button-{{ question.id }}" onclick="handleLike('{{ question.id }}')">
-                            <span class="like-icon">❤️</span>
-                        </button>
-                        <span id="like-count-{{ question.id }}">0</span>
-                        <div class="response-section">
-                            <textarea id="response-{{ question.id }}" rows="2" placeholder="質問やコメントを入力してください" class="w-full mt-2 p-2 border rounded"></textarea>
-                            <button onclick="submitResponse('{{ question.id }}')" class="bg-blue-500 text-white px-4 py-2 mt-2 rounded hover:bg-blue-600">送信</button>
-                        </div>
-                    </li>  <!-- MathJaxで数式を表示 -->
-                {% endfor %}
-                </ul>
-            </div>
-        {% endif %}
+    <!-- 間違えた問題と解説 -->
+    <div class="chalkboard">
+        <h3 class="text-xl font-bold mb-4">間違えた問題と解説</h3>
+        <ul>
+        {% for question in wrong_questions %}
+            <li>
+                <!-- MathJaxによる数式表示 -->
+                <strong>\( \displaystyle {{ question.text }} \)</strong><br>
+                <!-- 解説部分を linebreaks フィルターで改行反映 & MathJax対応 -->
+                <div>
+                    解説: <span>\( \displaystyle {{ question.explanation|linebreaks }} \)</span>
+                </div>
+                <!-- ライクボタン -->
+                <button class="like-button" id="like-button-{{ question.id }}" onclick="handleLike('{{ question.id }}')">
+                    <span class="like-icon">❤️</span>
+                </button>
+                <span id="like-count-{{ question.id }}">0</span>
+                <!-- コメントセクション -->
+                <div class="response-section">
+                    <textarea id="response-{{ question.id }}" rows="2" placeholder="質問やコメントを入力してください" class="w-full mt-2 p-2 border rounded"></textarea>
+                    <button onclick="submitResponse('{{ question.id }}')" class="bg-blue-500 text-white px-4 py-2 mt-2 rounded hover:bg-blue-600">送信</button>
+                </div>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+{% endif %}
 
         <!-- 総評の表示 -->
         <div class="chalkboard">
