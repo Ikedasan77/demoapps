@@ -12,108 +12,124 @@
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
     </script>  <!-- MathJaxライブラリを読み込んでLaTeX形式の数式をレンダリング -->
     <style>
+        /* 変更: 背景全体に左右の余白部分を配色 */
         body {
-            background-color: #e0f7fa;
-            background-image: url('{% static "images/studygirl_quiz_v1.png" %}'); /* 子供のイラストの背景 */
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
+            background: linear-gradient(to right, #00AEEF, #00AEEF) no-repeat, #f5f5f5;
+            background-size: 100vw 100%;
+            font-family: 'Noto Sans JP', sans-serif; /* 読みやすいフォントを指定 */
         }
+
+        /* 問題・回答部分の中央表示 */
         .quiz-container {
             background-color: #ffffff;
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
+            max-width: 900px;
             margin: 40px auto;
             text-align: center;
         }
+
+        /* 問題カードデザイン */
         .question-container {
-<<<<<<< HEAD
-            display: flex; /* 横並び */
-            align-items: center; /* 垂直方向に中央揃え */
+            display: flex; /* 変更: 問題番号と問題文を横並びに */
+            align-items: center; /* 縦の中央揃え */
             margin-bottom: 15px;
-            background-color: #a5d6a7; /* 薄緑色の背景 */
+            background-color: #f0f8ff; /* 薄い青色 */
             border-radius: 10px;
-            padding: 10px; /* 内側の余白 */
+            padding: 15px;
+            text-align: left;
+            border: 2px solid #90caf9; /* 枠線を強調 */
         }
+
+        /* 番号デザイン */
         .question-number {
-            font-size: 1.5rem;
+            display: inline-block;
+            font-size: 1.8rem; /* 大きめのフォントサイズ */
             font-weight: bold;
-            margin-right: 10px; /* 番号と問題文の間隔 */
+            color: white;
+            background-color: #ff7043; /* オレンジ色の丸背景 */
+            width: 50px; /* 変更: 幅を広げて安定感を増加 */
+            height: 50px; /* 変更: 高さも調整 */
+            line-height: 50px;
+            text-align: center;
+            border-radius: 50%; /* 丸くする */
+            margin-right: 15px; /* 問題文との間隔を広げる */
         }
+
+        /* 問題文のスタイル */
         .question-text {
-            font-size: 1.2rem;
-            text-align: left; /* 左揃え */
+            font-size: 1.4rem; /* 文字をさらに大きく */
+            white-space: pre-wrap; /* 改行を保持 */
         }
-        input[type="number"] {
-            margin-left: auto; /* 回答欄を右端に配置 */
-            width: 20%;
+
+        /* 入力欄のデザイン */
+        .answer-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1.2rem;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+            margin-top: 10px; /* 変更: 入力欄と問題文の間隔を調整 */
+        }
+
+        /* 背景部分の視認性向上 */
+        .timer-container, #timer {
+            color: #333;
+            background-color: rgba(255, 255, 255, 0.9); /* 白地に透明感を追加 */
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: 10px auto;
+            text-align: center;
+        }
+
+        select {
             padding: 5px;
+            font-size: 1.2rem;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
-=======
-        display: flex; /* 横並び */
-        align-items: center; /* 垂直方向に中央揃え */
-        margin-bottom: 15px;
-        background-color: #a5d6a7; /* 薄緑色の背景 */
-        border-radius: 10px;
-        padding: 10px; /* 内側の余白 */
-    }
 
-    .question-number {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-right: 10px; /* 番号と問題文の間隔 */
-    }
-
-    .question-text {
-        font-size: 1.2rem;
-        text-align: left; /* 左揃え */
-    }
-
-    input[type="number"] {
-        margin-left: auto; /* 回答欄を右端に配置 */
-        width: 20%;
-        padding: 5px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-
-    .question {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-bottom: 0;
-        padding: 20px;  /* 十分な余白を追加 */
-        background-color: #a5d6a7; /* 薄緑色の背景 */
-        border-radius: 10px;
-        text-align: center;
-        box-sizing: border-box; /* 枠内にコンテンツを収める */
-        width: 100%; /* 親要素幅いっぱいに表示 */
-    }
-
->>>>>>> c1c1013eb612b1e94060b9455d035cba6de5f88e
+        /* タイトルのスタイル */
+        h1 {
+            font-size: 2.5rem;
+            color: #424242;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="flex justify-center items-center mt-10">
-        <h1 class="text-3xl font-bold">計算アプリ</h1>
+        <h1>計算アプリ</h1>
         <button onclick="playMusic()" class="ml-4 bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">🎺 音楽を鳴らす</button>
     </div>
 
-    <div id="timer" class="text-center text-lg mt-4">残り時間: 60秒</div> <!-- タイマーの表示 -->
+    <div class="timer-container">
+        <label for="timer-select" class="timer-label">制限時間を選択:</label>
+        <select id="timer-select">
+            <option value="360">360秒</option>
+            <option value="480">480秒</option>
+            <option value="600">600秒</option>
+        </select>
+        <button onclick="startTimer()" class="ml-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">開始</button>
+    </div>
+
+    <div id="timer" class="text-center text-lg mt-4">残り時間: -- 秒</div>
 
     <div class="quiz-container">
-        <form method="post">
-            {% csrf_token %} <!-- CSRFトークンを追加（セキュリティ対策） -->
+        <form id="quiz-form" method="post" action="/result/"> <!-- 解説画面に遷移するURLを設定 -->
+            {% csrf_token %} <!-- CSRFトークンを追加 -->
             {% for question in questions %}
-                <div class="question-container"> <!-- 問題と解答欄のコンテナ -->
-                    <span class="question-number">({{ forloop.counter }})</span> <!-- 問題番号 -->
-                    <p class="question-text">\( \displaystyle {{ question.text }} \)</p> <!-- 問題文 -->
-                    <input type="number" name="answer_{{ forloop.counter0 }}" 
-                           class="answer-input w-1/4 px-3 py-2 border border-gray-300 rounded">
-                    <input type="hidden" name="question_id_{{ forloop.counter0 }}" value="{{ question.id }}">
+                <div class="question-container">
+                    <span class="question-number">{{ forloop.counter }}</span> <!-- 番号を色付き丸文字で表示 -->
+                    <div>
+                        <p class="question-text">\( \displaystyle {{ question.text }} \)</p> <!-- 変更: 番号の横に問題文を表示 -->
+                        <input type="text" name="answer_{{ forloop.counter0 }}" 
+                               class="answer-input" placeholder="回答を入力してください">
+                    </div>
                 </div>
             {% endfor %}
             <div class="text-center mt-6">
@@ -126,29 +142,37 @@
 
     <!-- 音楽再生用のJavaScript -->
     <script>
-<<<<<<< HEAD
         let musicAudio = new Audio("{% static 'audio/thinkingtime2.mp3' %}");
-        musicAudio.volume = 0.75; // 音量を0.75に設定
-=======
-        let musicAudio = new Audio("{% static 'audio/thinkingtime2.mp3' %}");  // ラッパ音の音声
->>>>>>> c1c1013eb612b1e94060b9455d035cba6de5f88e
+        musicAudio.volume = 0.75;
 
         function playMusic() {
             musicAudio.play();
         }
 
-        // タイマー機能
-        let timer = 60; // 初期値60秒
-        const timerElement = document.getElementById('timer');
-        const interval = setInterval(() => {
-            timer--;
+        let timer = 0;
+        let timerInterval;
+
+        function startTimer() {
+            const timerSelect = document.getElementById('timer-select');
+            timer = parseInt(timerSelect.value);
+
+            const timerElement = document.getElementById('timer');
             timerElement.textContent = `残り時間: ${timer}秒`;
-            if (timer <= 0) {
-                clearInterval(interval); // タイマーを停止
-                timerElement.textContent = '時間切れ!';
-                document.querySelector('form').submit(); // 自動的にフォーム送信
+
+            if (timerInterval) {
+                clearInterval(timerInterval);
             }
-        }, 1000); // 1秒ごとにカウントダウン
+
+            timerInterval = setInterval(() => {
+                timer--;
+                timerElement.textContent = `残り時間: ${timer}秒`;
+                if (timer <= 0) {
+                    clearInterval(timerInterval);
+                    timerElement.textContent = '時間切れ!';
+                    document.getElementById('quiz-form').submit();
+                }
+            }, 1000);
+        }
     </script>
 </body>
 </html>
