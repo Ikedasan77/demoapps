@@ -55,21 +55,29 @@ def submit_quiz_view(request):
                 continue
 
             # 回答を判定
+            is_correct = False
             if user_answer_str:  # 回答が入力されている場合
                 try:
                     user_answer = int(user_answer_str)  # 回答を整数に変換
                     if user_answer == question.correct_answer:  # 正解と比較
                         score += 1  # 正解数を加算
-                    else:
-                        wrong_questions.append(question)  # 不正解の問題を記録
+                        is_correct = True
                 except ValueError:  # 数値変換エラーの場合
-                    wrong_questions.append(question)  # 不正解として記録
-            else:
-                wrong_questions.append(question)  # 未回答も不正解として記録
+                    pass
+
+            # 不正解の場合にリストへ追加
+            if not is_correct:
+                wrong_questions.append({
+                    'id': question.id,
+                    'text': question.text,
+                    'correct_answer': question.correct_answer,
+                    'explanation': question.explanation,
+                    'is_correct': is_correct
+                })
 
         # セッションに結果を保存
         request.session['score'] = score  # スコアをセッションに保存
-        request.session['wrong_questions'] = [q.id for q in wrong_questions]  # 間違えた問題のIDを保存
+        request.session['wrong_questions'] = wrong_questions  # 間違えた問題を詳細付きで保存
         request.session['questions'] = [q.id for q in questions]  # 出題された問題のIDを保存
 
         # 結果画面にリダイレクト
@@ -85,17 +93,34 @@ def result_view(request):
     結果画面を表示するビュー。
     セッションに保存されたスコアや間違えた問題をテンプレートに渡します。
     """
-    score = request.session.get('score')  # セッションからスコアを取得
+    score = request.session.get('score', 0)  # セッションからスコアを取得（デフォルトは0）
     wrong_question_ids = request.session.get('wrong_questions', [])  # セッションから間違えた問題のIDを取得
     questions_ids = request.session.get('questions', [])  # セッションから出題された問題のIDを取得
 
     # データベースから問題を取得
-    wrong_questions = Question.objects.filter(id__in=wrong_question_ids)  # 間違えた問題
     questions = Question.objects.filter(id__in=questions_ids)  # 出題された問題
+    wrong_questions = Question.objects.filter(id__in=wrong_question_ids)  # 間違えた問題
+
+    total_score = len(questions) * 10  # 各問題10点満点として総得点を計算
+    score_percent = (score / total_score) * 100 if total_score > 0 else 0  # パーセンテージを計算
+
+    # アドバイスの例
+    if score_percent == 100:
+        advice = "素晴らしい！完全に理解しています！"
+    elif score_percent >= 80:
+        advice = "よくできました！あと少しで満点です。"
+    elif score_percent >= 50:
+        advice = "頑張りました！もう少し復習するとさらに良くなります。"
+    else:
+        advice = "復習が必要です。間違えた問題を確認しましょう。"
 
     # 結果をテンプレートに渡してレンダリング
     return render(request, 'mathquiz/result.html', {
         'score': score,  # スコア
-        'wrong_questions': wrong_questions,  # 間違えた問題の詳細
-        'questions': questions  # 出題された問題の詳細
+        'total_score': total_score,  # 総得点
+        'score_percent': score_percent,  # パーセンテージスコア
+        'wrong_questions': wrong_questions,  # 間違えた問題
+        'questions': questions,  # 出題された問題
+        'advice': advice  # アドバイス
     })
+

@@ -6,189 +6,129 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-    <link rel="icon" href="{% static 'favicon.ico' %}">  <!-- ファビコンのリンクを追加 -->
+    <link rel="icon" href="{% static 'favicon.ico' %}">
     <title>計算アプリ - 結果</title>
     <script type="text/javascript" async
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
-    </script>  <!-- MathJaxライブラリを読み込んでLaTeX形式の数式をレンダリング -->
+    </script>
     <style>
+        /* 左右の余白部分に配色 */
         body {
-            background-color: #e0f7fa;
-            background-image: url('{% static "images/background_notebook_quiz_v1.png" %}'); /* 手書き風の文房具のパターン */
-            background-image: url('{% static "stationery-pattern.png" %}'); /* 手書き風の文房具のパターン */
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
+            background-color: #00AEEF;
+            font-family: 'Noto Sans JP', sans-serif;
+            padding: 20px;
         }
+
         .result-container {
             background-color: #ffffff;
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             max-width: 800px;
-            margin: 40px auto;
-            background-image: url('{% static "images/background_notebook_quiz_v1.png" %}'); /* 控えめに散りばめられた手書き風の文房具 */
-            background-size: 150px;
-            background-repeat: repeat;
+            margin: 20px auto;
+            text-align: center;
         }
+
         .chalkboard {
             background-color: #2e7d32;
-            color: #ffffff;
-            font-family: 'Chalkboard SE', sans-serif;
+            color: #f5f5f5;
             padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border: 12px solid #5a3311; /* 木の枠の色を強めに変更 */
-            background-image: url('{% static "images/wood-texture.jpg" %}'); /* 木の素材感を追加 */
+            border: 12px solid #5a3311;
             margin-bottom: 20px;
         }
-        .like-button {
-            background-color: transparent;
+
+        /* スコアバー用 */
+        .progress-bar {
+            background-color: #dcedc8;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0 20px;
+            height: 20px;
+        }
+
+        .progress-bar-inner {
+            background-color: #4caf50;
+            height: 100%;
+            text-align: center;
+            color: white;
+            line-height: 20px;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            color: #00695c;
+            font-weight: bold;
+        }
+
+        .correct {
+            color: #a5d6a7;
+            font-weight: bold;
+        }
+
+        .incorrect {
+            color: #ffcdd2;
+            font-weight: bold;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            background-color: #00695c;
+            color: white;
             border: none;
-            color: #1da1f2;
             cursor: pointer;
-            margin-top: 10px;
-            transition: transform 0.1s;
-            display: flex;
-            align-items: center;
+            transition: background-color 0.3s;
         }
-        .like-button:active {
-            transform: scale(0.7); /* 押されたようなアニメーション */
-        
-        }
-        .response-section {
-            margin-top: 10px;
-        }
-　          .like-icon {
-            font-size: 1.5em;
-        }
-        .liked {
-            color: #e0245e;
-            animation: like-animation 1s;
-        }
-        @keyframes like-animation {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.5); }
-            100% { transform: scale(1); }
+
+        button:hover {
+            background-color: #004d40;
         }
     </style>
 </head>
 <body>
-    <div class="flex justify-center items-center mt-10">
-        <h1 class="text-3xl font-bold">計算アプリ - 結果</h1>
-        <button onclick="playMusic()" class="ml-4 bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">🎺 音楽を鳴らす</button>
-    </div>
-
     <div class="result-container">
-        <h2 class="text-2xl font-bold text-center mb-6">結果</h2>
+        <h1>計算アプリ - 結果</h1>
 
-        <!-- 正解・不正解のマルとバツの表示欄 -->
+        <!-- スコア表示 -->
         <div class="chalkboard">
-            <h3 class="text-xl font-bold mb-4">あなたの回答結果</h3>
-            <ul>
-                {% for question in questions %}
-                    <li>
-                        \( \displaystyle {{ question.text }} \) = {{ question.correct_answer }}
-                        <span>
-                            {% if question.is_correct %}
-                                <span class="correct">⭕ 正解</span>
-                            {% else %}
-                                <span class="incorrect">❌ 不正解</span>
-                            {% endif %}
-                        </span>
-                    </li>
-                {% endfor %}
-            {% for question in questions %}
-                <li>
-                    \( \displaystyle {{ question.text }} \) = {{ question.correct_answer }}
-                    <span>
-                        {% if question.is_correct %}
-                            <span style="color: #a5d6a7; font-weight: bold;">⭕ 正解</span>
-                        {% else %}
-                            <span style="color: #ffcdd2; font-weight: bold;">❌ 不正解</span>
-                        {% endif %}
-                    </span>
-                </li>
-            {% endfor %}
-            </ul>
+            <h3>スコア</h3>
+            <p class="score-display">{{ score }} / {{ total_score }} 点</p>
+            <div class="progress-bar">
+
+                <!-- デバッグ用にスコアパーセンテージを出力 -->
+<p>Debug: Score Percent = {{ score_percent }}</p>
+
+                <div class="progress-bar-inner" style="width: {{ score_percent|floatformat:0 }}%;">
+                    {{ score_percent|floatformat:0 }}%
+                </div>
+            </div>
         </div>
 
+        <!-- 間違えた問題と解説 -->
         {% if wrong_questions %}
-    <!-- 間違えた問題と解説 -->
-    <div class="chalkboard">
-        <h3 class="text-xl font-bold mb-4">間違えた問題と解説</h3>
-        <ul>
-        {% for question in wrong_questions %}
-            <li>
-                <!-- MathJaxによる数式表示 -->
-                <strong>\( \displaystyle {{ question.text }} \)</strong><br>
-                <!-- 解説部分を linebreaks フィルターで改行反映 & MathJax対応 -->
-                <div>
-                    解説: <span>\( \displaystyle {{ question.explanation|linebreaks }} \)</span>
-                </div>
-                <!-- ライクボタン -->
-                <button class="like-button" id="like-button-{{ question.id }}" onclick="handleLike('{{ question.id }}')">
-                    <span class="like-icon">❤️</span>
-                </button>
-                <span id="like-count-{{ question.id }}">0</span>
-                <!-- コメントセクション -->
-                <div class="response-section">
-                    <textarea id="response-{{ question.id }}" rows="2" placeholder="質問やコメントを入力してください" class="w-full mt-2 p-2 border rounded"></textarea>
-                    <button onclick="submitResponse('{{ question.id }}')" class="bg-blue-500 text-white px-4 py-2 mt-2 rounded hover:bg-blue-600">送信</button>
-                </div>
-            </li>
-        {% endfor %}
-        </ul>
-    </div>
-{% endif %}
-
-        <!-- 総評の表示 -->
         <div class="chalkboard">
-            <h3 class="text-xl font-bold mb-4">総評</h3>
+            <h3>間違えた問題と解説</h3>
+            <ul>
+                {% for question in wrong_questions %}
+                <li>
+                    <strong>\( \displaystyle {{ question.text }} \)</strong><br>
+                    解説: \( \displaystyle {{ question.explanation|linebreaks }} \)
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- 総評 -->
+        <div class="chalkboard">
+            <h3>総評</h3>
             <p>{{ advice }}</p>
         </div>
 
-        <!-- 問題に戻るボタン -->
-        <div class="text-center mt-6">
-            <button onclick="location.href='/'" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">次の問題</button>  <!-- トップページに戻るボタン -->
-        </div>
+        <!-- トップページへの戻りボタン -->
+        <button onclick="location.href='/'">次の問題</button>
     </div>
-
-    <!-- 音楽再生用のJavaScript -->
-    <script>
-        // 音声ファイルの定義
-        let musicAudio = new Audio("{% static 'audio/pythagoras-free1.mp3' %}");  // ラッパ音の音声
-
-        // 音楽を再生する関数
-        function playMusic() {
-            musicAudio.play();
-        }
-
-        function handleLike(questionId) {
-            const likeButton = document.getElementById(`like-button-${questionId}`);
-            const likeCountElement = document.getElementById(`like-count-${questionId}`);
-            let likeCount = parseInt(likeCountElement.innerText);
-
-            // ハートの色をピンクに変えてアニメーション
-            likeButton.classList.add('liked');
-
-            // 1秒後に色を元に戻し、クリック数を増加
-            setTimeout(() => {
-                likeButton.classList.remove('liked');
-                likeCount++;
-                likeCountElement.innerText = likeCount;
-            }, 1000);
-        }
-
-        function submitResponse(questionId) {
-            const response = document.getElementById(`response-${questionId}`).value;
-            if (response.trim() === '') {
-                alert('コメントを入力してください。');
-                return;
-            }
-            alert(`質問ID: ${questionId} へのコメント: ${response}`);
-            // サーバーにコメントを送信する処理を追加できます
-        }
-    </script>
 </body>
 </html>
