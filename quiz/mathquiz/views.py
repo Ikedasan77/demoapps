@@ -101,6 +101,16 @@ def result_view(request):
     questions = Question.objects.filter(id__in=questions_ids)  # 出題された問題
     wrong_questions = Question.objects.filter(id__in=wrong_question_ids)  # 間違えた問題
 
+    # 間違えた問題を辞書形式で処理（解説付き）
+    wrong_questions_data = [
+        {
+            'text': question.text,
+            'explanation': question.explanation,  # 解説を含める
+            'correct_answer': question.correct_answer  # 正解も含める場合
+        }
+        for question in wrong_questions
+    ]
+
     total_score = len(questions) * 10  # 各問題10点満点として総得点を計算
     score_percent = (score / total_score) * 100 if total_score > 0 else 0  # パーセンテージを計算
 
@@ -116,11 +126,12 @@ def result_view(request):
 
     # 結果をテンプレートに渡してレンダリング
     return render(request, 'mathquiz/result.html', {
-        'score': score,  # スコア
-        'total_score': total_score,  # 総得点
-        'score_percent': score_percent,  # パーセンテージスコア
-        'wrong_questions': wrong_questions,  # 間違えた問題
-        'questions': questions,  # 出題された問題
-        'advice': advice  # アドバイス
+        'score': score,
+        'total_score': total_score,
+        'score_percent': score_percent,
+        'wrong_questions': wrong_questions_data,  # 修正: 辞書形式で解説を渡す
+        'questions': questions,
+        'advice': advice
     })
+
 

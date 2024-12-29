@@ -98,7 +98,7 @@
             <div class="progress-bar">
 
                 <!-- デバッグ用にスコアパーセンテージを出力 -->
-<p>Debug: Score Percent = {{ score_percent }}</p>
+        <p>Debug: Score Percent = {{ score_percent }}</p>
 
                 <div class="progress-bar-inner" style="width: {{ score_percent|floatformat:0 }}%;">
                     {{ score_percent|floatformat:0 }}%
@@ -112,9 +112,10 @@
             <h3>間違えた問題と解説</h3>
             <ul>
                 {% for question in wrong_questions %}
-                <li>
-                    <strong>\( \displaystyle {{ question.text }} \)</strong><br>
-                    解説: \( \displaystyle {{ question.explanation|linebreaks }} \)
+               <li>
+                    <strong>問題: {{ question.text }}</strong><br>
+                    解説: {{ question.explanation }}<br>
+                    正解: {{ question.correct_answer }}
                 </li>
                 {% endfor %}
             </ul>
