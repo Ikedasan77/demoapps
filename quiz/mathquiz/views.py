@@ -80,6 +80,11 @@ def submit_quiz_view(request):
         request.session['wrong_questions'] = wrong_questions  # 間違えた問題を詳細付きで保存
         request.session['questions'] = [q.id for q in questions]  # 出題された問題のIDを保存
 
+        # デバッグ用にセッションデータを確認
+        print("Debug: Session Data - Score:", request.session.get('score'))
+        print("Debug: Session Data - Wrong Question IDs:", request.session.get('wrong_questions'))
+        print("Debug: Session Data - Question IDs:", request.session.get('questions'))
+
         # 結果画面にリダイレクト
         return redirect('result')
 
@@ -110,6 +115,10 @@ def result_view(request):
         }
         for question in wrong_questions
     ]
+
+    # ここにデバッグ用の print() を追加
+    print("Debug: Questions =", questions)
+    print("Debug: Wrong Questions =", wrong_questions)
 
     total_score = len(questions) * 10  # 各問題10点満点として総得点を計算
     score_percent = (score / total_score) * 100 if total_score > 0 else 0  # パーセンテージを計算

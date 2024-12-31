@@ -12,7 +12,6 @@
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
     </script>
     <style>
-        /* 左右の余白部分に配色 */
         body {
             background-color: #00AEEF;
             font-family: 'Noto Sans JP', sans-serif;
@@ -38,7 +37,6 @@
             margin-bottom: 20px;
         }
 
-        /* スコアバー用 */
         .progress-bar {
             background-color: #dcedc8;
             border-radius: 10px;
@@ -59,6 +57,10 @@
             font-size: 1.8rem;
             color: #00695c;
             font-weight: bold;
+        }
+
+        ul {
+            text-align: left;
         }
 
         .correct {
@@ -96,14 +98,11 @@
             <h3>スコア</h3>
             <p class="score-display">{{ score }} / {{ total_score }} 点</p>
             <div class="progress-bar">
-
-                <!-- デバッグ用にスコアパーセンテージを出力 -->
-        <p>Debug: Score Percent = {{ score_percent }}</p>
-
                 <div class="progress-bar-inner" style="width: {{ score_percent|floatformat:0 }}%;">
                     {{ score_percent|floatformat:0 }}%
                 </div>
             </div>
+            <p>Debug: Score Percent = {{ score_percent }}</p>
         </div>
 
         <!-- 間違えた問題と解説 -->
@@ -112,11 +111,11 @@
             <h3>間違えた問題と解説</h3>
             <ul>
                 {% for question in wrong_questions %}
-               <li>
-                    <strong>問題: {{ question.text }}</strong><br>
-                    解説: {{ question.explanation }}<br>
-                    正解: {{ question.correct_answer }}
-                </li>
+                    <li>
+                        <strong>問題: {{ question.text }}</strong><br>
+                        解説: {{ question.explanation }}<br>
+                        正解: {{ question.correct_answer }}
+                    </li>
                 {% endfor %}
             </ul>
         </div>
