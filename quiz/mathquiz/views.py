@@ -2,13 +2,30 @@ from django.shortcuts import render, redirect  # 必要なDjangoモジュール�
 from .models import Question  # モデルのインポート
 import random  # ランダム選択に使用
 
+# 部分一致の許容
+def normalize_answer(answer):
+    """
+    回答の正規化処理を行う補助関数。
+    例: スペース除去や小文字化など。
+    """
+    # 余分なスペースを除去
+    answer = answer.strip()
+    # 必要に応じて小文字変換などの正規化を追加
+    return answer
+
+def is_correct(user_answer, correct_answer):
+    """
+    ユーザーの回答と正解の比較を行う補助関数。
+    """
+    # 正規化して比較
+    return normalize_answer(user_answer) == normalize_answer(correct_answer)
+
 # トップページ表示ビュー
 def home(request):
     """
     トップページを表示するビュー。
     """
     return render(request, 'mathquiz/home.html')  # トップページ用テンプレートを表示
-
 
 # 問題表示ビュー（GET専用）
 def quiz_view(request):
@@ -27,7 +44,6 @@ def quiz_view(request):
     # GET以外のリクエストはクイズ画面にリダイレクト
     return redirect('quiz')
 
-
 # 解答処理ビュー（POST専用）
 def submit_quiz_view(request):
     """
@@ -37,7 +53,7 @@ def submit_quiz_view(request):
     if request.method == 'POST':  # POSTリクエストのみ処理
         score = 0  # 正解数を初期化
         wrong_questions = []  # 間違えた問題のリスト
-        questions = []  # 出題された問題をリストに保持
+        questions = []  # 出題された問題のリスト
 
         # ユーザーの解答を処理
         for i in range(10):  # 最大10問の解答を処理
@@ -55,29 +71,19 @@ def submit_quiz_view(request):
                 continue
 
             # 回答を判定
-            is_correct = False
+            is_correct_flag = False
             if user_answer_str:  # 回答が入力されている場合
-                try:
-                    user_answer = int(user_answer_str)  # 回答を整数に変換
-                    if user_answer == question.correct_answer:  # 正解と比較
-                        score += 1  # 正解数を加算
-                        is_correct = True
-                except ValueError:  # 数値変換エラーの場合
-                    pass
+                if is_correct(user_answer_str, str(question.correct_answer)):  # 正解と比較
+                    score += 1  # 正解数を加算
+                    is_correct_flag = True
 
             # 不正解の場合にリストへ追加
-            if not is_correct:
-                wrong_questions.append({
-                    'id': question.id,
-                    'text': question.text,
-                    'correct_answer': question.correct_answer,
-                    'explanation': question.explanation,
-                    'is_correct': is_correct
-                })
+            if not is_correct_flag:
+                wrong_questions.append(question.id)  # 問題のIDのみを保存
 
         # セッションに結果を保存
         request.session['score'] = score  # スコアをセッションに保存
-        request.session['wrong_questions'] = wrong_questions  # 間違えた問題を詳細付きで保存
+        request.session['wrong_questions'] = wrong_questions  # 間違えた問題のIDを保存
         request.session['questions'] = [q.id for q in questions]  # 出題された問題のIDを保存
 
         # デバッグ用にセッションデータを確認
@@ -90,7 +96,6 @@ def submit_quiz_view(request):
 
     # POST以外のリクエストはクイズ画面にリダイレクト
     return redirect('quiz')
-
 
 # 結果表示ビュー
 def result_view(request):
@@ -111,12 +116,12 @@ def result_view(request):
         {
             'text': question.text,
             'explanation': question.explanation,  # 解説を含める
-            'correct_answer': question.correct_answer  # 正解も含める場合
+            'correct_answer': question.correct_answer  # 正解も含める
         }
         for question in wrong_questions
     ]
 
-    # ここにデバッグ用の print() を追加
+    # デバッグ用のログ出力
     print("Debug: Questions =", questions)
     print("Debug: Wrong Questions =", wrong_questions)
 
@@ -142,5 +147,3 @@ def result_view(request):
         'questions': questions,
         'advice': advice
     })
-
-

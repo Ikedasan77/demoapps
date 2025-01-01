@@ -116,9 +116,12 @@
                         解説: {{ question.explanation }}<br>
                         正解: {{ question.correct_answer }}
                     </li>
+                {% empty %}
+                    <p>全問正解です！</p>
                 {% endfor %}
             </ul>
         </div>
+
         {% endif %}
 
         <!-- 総評 -->

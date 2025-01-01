@@ -124,11 +124,13 @@
             {% csrf_token %} <!-- CSRFトークンを追加 -->
             {% for question in questions %}
                 <div class="question-container">
-                    <span class="question-number">{{ forloop.counter }}</span> <!-- 番号を色付き丸文字で表示 -->
+                    <span class="question-number">{{ forloop.counter }}</span>
                     <div>
-                        <p class="question-text">\( \displaystyle {{ question.text }} \)</p> <!-- 変更: 番号の横に問題文を表示 -->
+                        <p class="question-text">\( \displaystyle {{ question.text }} \)</p>
                         <input type="text" id="answer_{{ forloop.counter0 }}" name="answer_{{ forloop.counter0 }}"
                                class="answer-input" placeholder="回答を入力してください">
+                        <!-- hidden フィールドで question.id を送信 -->
+                        <input type="hidden" name="question_id_{{ forloop.counter0 }}" value="{{ question.id }}">
                     </div>
                 </div>
             {% endfor %}
