@@ -60,6 +60,10 @@ def submit_quiz_view(request):
             user_answer_str = request.POST.get(f'answer_{i}')  # 回答内容を取得
             question_id = request.POST.get(f'question_id_{i}')  # 問題IDを取得
 
+            # デバッグ: 取得データを出力
+            print(f"Debug: Received answer_{i} = {user_answer_str}")
+            print(f"Debug: Received question_id_{i} = {question_id}")
+
             if not question_id:  # 問題IDが存在しない場合スキップ
                 continue
 

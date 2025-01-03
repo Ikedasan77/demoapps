@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Category(models.Model):
     name = models.CharField(max_length=100)
 
@@ -55,3 +56,23 @@ class Question(models.Model):
 
     def __str__(self):
         return f"[{self.category.name}] {self.text}"
+
+
+class IncorrectChoice(models.Model):
+    question = models.ForeignKey(
+        Question,
+        on_delete=models.CASCADE,
+        related_name="incorrect_choices",
+        verbose_name="問題"
+    )
+    text = models.TextField(
+        verbose_name="不正解の選択肢",
+        help_text="この選択肢を登録してください。"
+    )
+
+    class Meta:
+        verbose_name = "不正解の選択肢"
+        verbose_name_plural = "不正解の選択肢"
+
+    def __str__(self):
+        return f"不正解選択肢: {self.text} (問題: {self.question.text})"

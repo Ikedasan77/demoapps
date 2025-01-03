@@ -1,5 +1,5 @@
 from django.contrib import admin  # 管理画面のカスタマイズ用モジュールをインポート
-from .models import Category, Question  # CategoryとQuestionモデルをインポート
+from .models import Category, Question, IncorrectChoice  # CategoryとQuestion、IncorrectChoiceモデルをインポート
 from django.db import models
 from django.forms import Textarea
 from django.utils.safestring import mark_safe
@@ -15,9 +15,25 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ("id", "name")  # 一覧で表示するフィールド
     search_fields = ("name",)  # カテゴリ名で検索可能にする設定
 
+class IncorrectChoiceInline(admin.TabularInline):
+    model = IncorrectChoice
+    extra = 3  # デフォルトで3つの空の入力欄を表示
+    verbose_name = "不正解"
+    verbose_name_plural = "不正解の選択肢"
+    formfield_overrides = {
+        models.TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 40})},
+    }
+
+    class Media:
+        js = [
+            'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js',
+        ]
+
 # 問題管理用の管理クラス
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
+    inlines = [IncorrectChoiceInline]  # インラインフォームを追加
+
     # 一覧画面で表示するフィールド
     list_display = ("id", "text", "category", "correct_answer", "explanation_preview")
     list_filter = ("category",)  # カテゴリで絞り込み可能
