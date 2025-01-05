@@ -137,34 +137,49 @@
         }
 
         function submitAnswer(selectedAnswer, correctAnswer) {
+            // デバッグ用のログ
+            console.log("Selected Answer:", selectedAnswer);
+            console.log("Correct Answer:", correctAnswer);
+
+            // nullチェック
             if (!selectedAnswer || !correctAnswer) {
-                console.error("Selected or Correct Answer is missing.");
-                return;
-            }
+            console.error("Selected or Correct Answer is missing.");
+            return;
+        }
 
-            const isCorrect = selectedAnswer.trim() === correctAnswer.trim();
-            console.log("Is Correct:", isCorrect);
+        // LaTeXを使った文字列比較の正確性を向上
+        const sanitizedSelectedAnswer = selectedAnswer.replace(/\\\(/g, "").replace(/\\\)/g, "").trim();
+        const sanitizedCorrectAnswer = correctAnswer.replace(/\\\(/g, "").replace(/\\\)/g, "").trim();
 
-            const choices = document.querySelectorAll('.choice');
-            choices.forEach(choice => {
-                if (choice.innerHTML === `\\( ${correctAnswer} \\)`) {
-                    choice.style.backgroundColor = "#C8E6C9"; // 正解は緑色
-                } else if (choice.innerHTML === `\\( ${selectedAnswer} \\)`) {
-                    choice.style.backgroundColor = "#FFCDD2"; // 不正解は赤色
-                }
-                choice.onclick = null; // クリックを無効化
-            });
+        console.log("Sanitized Selected Answer:", sanitizedSelectedAnswer);
+        console.log("Sanitized Correct Answer:", sanitizedCorrectAnswer);
 
-            const resultMessage = isCorrect ? "正解です！" : "不正解です。";
-            const explanation = questions[currentQuestionIndex].explanation || "解説はありません。";
+        const isCorrect = sanitizedSelectedAnswer === sanitizedCorrectAnswer;
+        console.log("Is Correct:", isCorrect);
 
-            document.getElementById('result-message').textContent = resultMessage;
-            document.getElementById('explanation-text').textContent = `解説: ${explanation}`;
+        const choices = document.querySelectorAll('.choice');
+        choices.forEach(choice => {
+        // 選択肢のLaTeXをサニタイズして比較
+        const choiceContent = choice.innerHTML.replace(/\\\(/g, "").replace(/\\\)/g, "").trim();
 
-            setTimeout(() => {
-                document.getElementById('question-section').style.display = "none";
-                document.getElementById('explanation-section').style.display = "block";
-            }, 1000);
+        if (choiceContent === sanitizedCorrectAnswer) {
+            choice.style.backgroundColor = "#C8E6C9"; // 正解は緑色
+        } else if (choiceContent === sanitizedSelectedAnswer) {
+            choice.style.backgroundColor = "#FFCDD2"; // 不正解は赤色
+        }
+        choice.onclick = null; // クリックを無効化
+    });
+
+    const resultMessage = isCorrect ? "正解です！" : "不正解です。";
+    const explanation = questions[currentQuestionIndex].explanation || "解説はありません。";
+
+    document.getElementById('result-message').textContent = resultMessage;
+    document.getElementById('explanation-text').textContent = `解説: ${explanation}`;
+
+    setTimeout(() => {
+        document.getElementById('question-section').style.display = "none";
+        document.getElementById('explanation-section').style.display = "block";
+    }, 1000);
         }
 
         function goToNextQuestion() {
