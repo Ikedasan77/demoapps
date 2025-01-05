@@ -137,15 +137,10 @@
         }
 
         function submitAnswer(selectedAnswer, correctAnswer) {
-            // デバッグ用のログ
-            console.log("Selected Answer:", selectedAnswer);
-            console.log("Correct Answer:", correctAnswer);
-
-            // nullチェック
-            if (!selectedAnswer || !correctAnswer) {
-            console.error("Selected or Correct Answer is missing.");
-            return;
-        }
+    if (!correctAnswer) {
+        console.error("Correct Answer is undefined. Please check your data.");
+        return;
+    }
 
         // LaTeXを使った文字列比較の正確性を向上
         const sanitizedSelectedAnswer = selectedAnswer.replace(/\\\(/g, "").replace(/\\\)/g, "").trim();

@@ -37,16 +37,17 @@ def quiz_view(request):
 
             # 問題データを構築
             questions_with_choices.append({
-                'id': question.id,
-                'text': question.text,
-                'choices': all_choices,  # 選択肢（ランダム）
-                'category': question.category.name if question.category else '',  # 単元名
+                'id': question.id,  # 問題のID
+                'text': question.text,  # 問題文
+                'choices': all_choices,  # ランダムに並び替えた選択肢
+                'correctAnswer': question.correct_answer,  # 正解
+                'category': question.category.name if question.category else '',  # 単元名（任意）
             })
 
-        # テンプレートに渡す
-    return render(request, 'mathquiz/quiz.html', {
-        'questions': json.dumps(questions_with_choices, ensure_ascii=False)
-    })
+        # JSON形式で問題データを渡す
+        return render(request, 'mathquiz/quiz.html', {
+            'questions': json.dumps(questions_with_choices, ensure_ascii=False)  # 日本語対応
+        })
 
     # GET以外のリクエストはリダイレクト
     return redirect('quiz')
