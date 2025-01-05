@@ -7,12 +7,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <link rel="icon" href="{% static 'favicon.ico' %}">
     <title>計算アプリ</title>
-    <script type="text/javascript" async
+    <!-- MathJax スクリプト -->
+    <script
+        type="text/javascript"
+        defer
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
-    </script>
-    <script>
-        // MathJaxが読み込まれてから実行される
-        MathJax.typesetPromise();
     </script>
     <style>
         body {
@@ -55,10 +54,6 @@
             margin-bottom: 15px;
         }
         .choices {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             margin-top: 20px;
             display: flex;
             flex-direction: column;
@@ -125,36 +120,31 @@
             document.getElementById('question-text').innerHTML = `\\( ${question.text} \\)`;
 
             // MathJaxでレンダリング
-            MathJax.typeset();
+            MathJax.typesetPromise().catch(err => console.error("MathJax rendering error:", err));
 
             const choicesContainer = document.getElementById('choices');
             choicesContainer.innerHTML = '';
             question.choices.forEach(choice => {
-            const choiceDiv = document.createElement('div');
+                const choiceDiv = document.createElement('div');
                 choiceDiv.innerHTML = `\\( ${choice} \\)`; // LaTeXを埋め込む
                 choiceDiv.className = 'choice';
                 choiceDiv.onclick = () => submitAnswer(choice, question.correct_answer);
                 choicesContainer.appendChild(choiceDiv);
-        });
+            });
 
             // MathJaxで選択肢を再レンダリング
-            MathJax.typeset();
+            MathJax.typesetPromise().catch(err => console.error("MathJax rendering error:", err));
         }
 
         function submitAnswer(selectedAnswer, correctAnswer) {
+            if (!selectedAnswer || !correctAnswer) {
+                console.error("Selected or Correct Answer is missing.");
+                return;
+            }
+
             const isCorrect = selectedAnswer.trim() === correctAnswer.trim();
+            console.log("Is Correct:", isCorrect);
 
-    // デバッグ用のログ出力
-    console.log("Selected Answer:", selectedAnswer.trim());
-    console.log("Correct Answer:", correctAnswer.trim());
-
-    if (isCorrect) {
-        // 正解の場合の処理
-        console.log("Correct!");
-    } else {
-        // 不正解の場合の処理
-        console.log("Incorrect!");
-    }
             const choices = document.querySelectorAll('.choice');
             choices.forEach(choice => {
                 if (choice.innerHTML === `\\( ${correctAnswer} \\)`) {
@@ -165,8 +155,8 @@
                 choice.onclick = null; // クリックを無効化
             });
 
-            const resultMessage = selectedAnswer === correctAnswer ? "正解です！" : "不正解です。";
-            const explanation = questions[currentQuestionIndex].explanation;
+            const resultMessage = isCorrect ? "正解です！" : "不正解です。";
+            const explanation = questions[currentQuestionIndex].explanation || "解説はありません。";
 
             document.getElementById('result-message').textContent = resultMessage;
             document.getElementById('explanation-text').textContent = `解説: ${explanation}`;
@@ -190,8 +180,7 @@
         }
 
         // 初期ロード
-        loadQuestion();
-
+        document.addEventListener("DOMContentLoaded", loadQuestion);
     </script>
 </body>
 </html>
