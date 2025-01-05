@@ -10,6 +10,10 @@
     <script type="text/javascript" async
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
     </script>
+    <script>
+        // MathJaxが読み込まれてから実行される
+        MathJax.typesetPromise();
+    </script>
     <style>
         body {
             background: linear-gradient(to right, #00AEEF, #00AEEF) no-repeat, #f5f5f5;
@@ -17,7 +21,7 @@
             font-family: 'Noto Sans JP', sans-serif;
         }
         .quiz-container {
-            background-color: #2F4F4F; /* ダークスレートグレー */
+            background-color: #2F4F4F;
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -26,12 +30,12 @@
             color: #ffffff;
         }
         .question-container {
-            background-color: #2E8B57; /* 黒板グリーン */
+            background-color: #2E8B57;
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 20px;
             text-align: center;
-            border: 4px solid #1C5E3B; /* 黒板の淵を細く調整 */
+            border: 4px solid #1C5E3B;
         }
         .question-number {
             font-size: 1.8rem;
@@ -48,32 +52,35 @@
         .question-text {
             font-size: 1.4rem;
             color: #F0F8FF;
+            margin-bottom: 15px;
         }
         .choices {
             margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .choice {
-            background-color: #4682B4;
-            color: white;
+            background-color: #FFFFFF;
+            color: #000;
             border-radius: 5px;
-            padding: 10px;
+            padding: 15px;
             margin: 10px 0;
             cursor: pointer;
             font-size: 1.2rem;
-            transition: background-color 0.3s;
-            display: block;
             text-align: center;
-            width: 100%;
+            word-wrap: break-word;
+            word-break: break-word;
+            border: 1px solid #ccc;
+            width: 80%;
+            transition: background-color 0.3s;
         }
         .choice:hover {
-            background-color: #5A9BD4;
-        }
-        .result-container {
-            margin-top: 20px;
-        }
-        .result-message {
-            font-size: 1.4rem;
-            font-weight: bold;
+            background-color: #F0F0F0;
         }
         button {
             background-color: #4682B4;
@@ -82,6 +89,7 @@
             padding: 10px 20px;
             font-size: 1.1rem;
             cursor: pointer;
+            margin-top: 20px;
         }
         button:hover {
             background-color: #5A9BD4;
@@ -90,19 +98,16 @@
 </head>
 <body>
     <div class="quiz-container">
-        <!-- 問題セクション -->
         <div id="question-section" class="question-container">
             <span class="question-number" id="question-number">1</span>
             <p class="question-text" id="question-text"></p>
-            <p class="question-category" id="question-category" style="margin-top: 10px; font-size: 1rem;">
-                単元: <span id="category-name"></span>
-            </p>
-            <div id="choices" class="choices"></div>
+            <div id="choices" class="choices">
+                <!-- 選択肢がここに挿入されます -->
+            </div>
         </div>
 
-        <!-- 解説セクション -->
         <div id="explanation-section" class="question-container" style="display: none;">
-            <p id="result-message" class="result-message"></p>
+            <p id="result-message" class="text-lg font-bold"></p>
             <p id="explanation-text" class="question-text"></p>
             <button onclick="goToNextQuestion()">次の問題へ</button>
         </div>
@@ -117,30 +122,59 @@
         function loadQuestion() {
             const question = questions[currentQuestionIndex];
             document.getElementById('question-number').textContent = currentQuestionIndex + 1;
-            document.getElementById('question-text').textContent = question.text;
-            document.getElementById('category-name').textContent = question.category || "未分類";
+            document.getElementById('question-text').innerHTML = `\\( ${question.text} \\)`;
 
-            // 選択肢をランダムに表示
+            // MathJaxでレンダリング
+            MathJax.typeset();
+
             const choicesContainer = document.getElementById('choices');
-            choicesContainer.innerHTML = ''; // 既存の選択肢をクリア
+            choicesContainer.innerHTML = '';
             question.choices.forEach(choice => {
-                const choiceButton = document.createElement('button');
-                choiceButton.textContent = choice;
-                choiceButton.className = 'choice';
-                choiceButton.onclick = () => submitAnswer(choice, question.correct_answer);
-                choicesContainer.appendChild(choiceButton);
-            });
+            const choiceDiv = document.createElement('div');
+                choiceDiv.innerHTML = `\\( ${choice} \\)`; // LaTeXを埋め込む
+                choiceDiv.className = 'choice';
+                choiceDiv.onclick = () => submitAnswer(choice, question.correct_answer);
+                choicesContainer.appendChild(choiceDiv);
+        });
+
+            // MathJaxで選択肢を再レンダリング
+            MathJax.typeset();
         }
 
         function submitAnswer(selectedAnswer, correctAnswer) {
+            const isCorrect = selectedAnswer.trim() === correctAnswer.trim();
+
+    // デバッグ用のログ出力
+    console.log("Selected Answer:", selectedAnswer.trim());
+    console.log("Correct Answer:", correctAnswer.trim());
+
+    if (isCorrect) {
+        // 正解の場合の処理
+        console.log("Correct!");
+    } else {
+        // 不正解の場合の処理
+        console.log("Incorrect!");
+    }
+            const choices = document.querySelectorAll('.choice');
+            choices.forEach(choice => {
+                if (choice.innerHTML === `\\( ${correctAnswer} \\)`) {
+                    choice.style.backgroundColor = "#C8E6C9"; // 正解は緑色
+                } else if (choice.innerHTML === `\\( ${selectedAnswer} \\)`) {
+                    choice.style.backgroundColor = "#FFCDD2"; // 不正解は赤色
+                }
+                choice.onclick = null; // クリックを無効化
+            });
+
             const resultMessage = selectedAnswer === correctAnswer ? "正解です！" : "不正解です。";
             const explanation = questions[currentQuestionIndex].explanation;
 
             document.getElementById('result-message').textContent = resultMessage;
-            document.getElementById('explanation-text').textContent = "解説: " + explanation;
+            document.getElementById('explanation-text').textContent = `解説: ${explanation}`;
 
-            document.getElementById('question-section').style.display = "none";
-            document.getElementById('explanation-section').style.display = "block";
+            setTimeout(() => {
+                document.getElementById('question-section').style.display = "none";
+                document.getElementById('explanation-section').style.display = "block";
+            }, 1000);
         }
 
         function goToNextQuestion() {
@@ -151,12 +185,13 @@
                 document.getElementById('explanation-section').style.display = "none";
                 loadQuestion();
             } else {
-                window.location.href = "/results/"; // 結果画面にリダイレクト
+                window.location.href = "/results/";
             }
         }
 
         // 初期ロード
         loadQuestion();
+
     </script>
 </body>
 </html>
