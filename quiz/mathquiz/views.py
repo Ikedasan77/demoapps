@@ -1,138 +1,111 @@
-from django.shortcuts import render, redirect  # 必要なDjangoモジュールをインポート
-from .models import Question  # モデルのインポート
-import random  # ランダム選択に使用
+from django.shortcuts import render, redirect
+from .models import Question
+import random
+from django.http import JsonResponse
+import json  # jsonモジュールのインポート
 
-# 部分一致の許容
+# 回答の正規化
 def normalize_answer(answer):
-    """
-    回答の正規化処理を行う補助関数。
-    例: スペース除去や小文字化など。
-    """
-    # 余分なスペースを除去
-    answer = answer.strip()
-    # 必要に応じて小文字変換などの正規化を追加
-    return answer
+    return answer.strip()
 
 def is_correct(user_answer, correct_answer):
-    """
-    ユーザーの回答と正解の比較を行う補助関数。
-    """
-    # 正規化して比較
     return normalize_answer(user_answer) == normalize_answer(correct_answer)
 
-# トップページ表示ビュー
+# トップページビュー
 def home(request):
-    """
-    トップページを表示するビュー。
-    """
-    return render(request, 'mathquiz/home.html')  # トップページ用テンプレートを表示
+    return render(request, 'mathquiz/home.html')
 
-# 問題表示ビュー（GET専用）
+# 問題表示ビュー
 def quiz_view(request):
-    """
-    問題を表示するビュー。
-    ランダムに10問を取得してテンプレートに渡します。
-    """
-    if request.method == 'GET':  # GETリクエストの場合
-        questions = list(Question.objects.all())  # データベースからすべての問題を取得
-        num_questions = 10  # 出題する問題数
-        selected_questions = random.sample(questions, min(num_questions, len(questions)))  # ランダムに10問選択
+    if request.method == 'GET':
+        # データベースから全ての問題を取得し、関連する不正解肢も一緒に取得
+        questions = list(Question.objects.prefetch_related('incorrect_choices').all())
 
-        # 選択した問題をテンプレートに渡す
-        return render(request, 'mathquiz/quiz.html', {'questions': selected_questions})
+        # 出題する問題数を指定（例: 10問）
+        num_questions = 10
+        selected_questions = random.sample(questions, min(num_questions, len(questions)))
 
-    # GET以外のリクエストはクイズ画面にリダイレクト
+        # 4肢択一形式の選択肢を構築
+        questions_with_choices = []
+        for question in selected_questions:
+            # 不正解の選択肢を取得
+            incorrect_choices = [choice.text for choice in question.incorrect_choices.all()]
+            # 正解を追加
+            all_choices = incorrect_choices + [question.correct_answer]
+            # 選択肢をランダムに並び替え
+            random.shuffle(all_choices)
+
+            # 問題データを構築
+            questions_with_choices.append({
+                'id': question.id,
+                'text': question.text,
+                'choices': all_choices,  # 選択肢（ランダム）
+                'category': question.category.name if question.category else '',  # 単元名
+            })
+
+        # テンプレートに渡す
+    return render(request, 'mathquiz/quiz.html', {
+        'questions': json.dumps(questions_with_choices, ensure_ascii=False)
+    })
+
+    # GET以外のリクエストはリダイレクト
     return redirect('quiz')
 
-# 解答処理ビュー（POST専用）
+# 解答処理ビュー
 def submit_quiz_view(request):
-    """
-    解答を処理するビュー。
-    解答を採点し、結果をテンプレートに渡すための処理を行います。
-    """
-    if request.method == 'POST':  # POSTリクエストのみ処理
-        score = 0  # 正解数を初期化
-        wrong_questions = []  # 間違えた問題のリスト
-        questions = []  # 出題された問題のリスト
+    if request.method == 'POST':
+        score = 0
+        wrong_questions = []
+        questions = []
 
-        # ユーザーの解答を処理
-        for i in range(10):  # 最大10問の解答を処理
-            user_answer_str = request.POST.get(f'answer_{i}')  # 回答内容を取得
-            question_id = request.POST.get(f'question_id_{i}')  # 問題IDを取得
+        for i in range(10):
+            user_answer = request.POST.get(f'answer_{i}')
+            question_id = request.POST.get(f'question_id_{i}')
 
-            # デバッグ: 取得データを出力
-            print(f"Debug: Received answer_{i} = {user_answer_str}")
-            print(f"Debug: Received question_id_{i} = {question_id}")
-
-            if not question_id:  # 問題IDが存在しない場合スキップ
+            if not question_id:
                 continue
 
             try:
-                question_id = int(question_id)  # IDを整数に変換
-                question = Question.objects.get(id=question_id)  # データベースから該当問題を取得
-                questions.append(question)  # 出題された問題をリストに追加
-            except (Question.DoesNotExist, ValueError):  # 問題が見つからない場合またはIDが不正な場合
+                question_id = int(question_id)
+                question = Question.objects.get(id=question_id)
+                questions.append(question)
+            except (Question.DoesNotExist, ValueError):
                 continue
 
-            # 回答を判定
-            is_correct_flag = False
-            if user_answer_str:  # 回答が入力されている場合
-                if is_correct(user_answer_str, str(question.correct_answer)):  # 正解と比較
-                    score += 1  # 正解数を加算
-                    is_correct_flag = True
+            if user_answer and is_correct(user_answer, str(question.correct_answer)):
+                score += 1
+            else:
+                wrong_questions.append(question.id)
 
-            # 不正解の場合にリストへ追加
-            if not is_correct_flag:
-                wrong_questions.append(question.id)  # 問題のIDのみを保存
+        request.session['score'] = score
+        request.session['wrong_questions'] = wrong_questions
+        request.session['questions'] = [q.id for q in questions]
 
-        # セッションに結果を保存
-        request.session['score'] = score  # スコアをセッションに保存
-        request.session['wrong_questions'] = wrong_questions  # 間違えた問題のIDを保存
-        request.session['questions'] = [q.id for q in questions]  # 出題された問題のIDを保存
-
-        # デバッグ用にセッションデータを確認
-        print("Debug: Session Data - Score:", request.session.get('score'))
-        print("Debug: Session Data - Wrong Question IDs:", request.session.get('wrong_questions'))
-        print("Debug: Session Data - Question IDs:", request.session.get('questions'))
-
-        # 結果画面にリダイレクト
         return redirect('result')
 
-    # POST以外のリクエストはクイズ画面にリダイレクト
     return redirect('quiz')
 
 # 結果表示ビュー
 def result_view(request):
-    """
-    結果画面を表示するビュー。
-    セッションに保存されたスコアや間違えた問題をテンプレートに渡します。
-    """
-    score = request.session.get('score', 0)  # セッションからスコアを取得（デフォルトは0）
-    wrong_question_ids = request.session.get('wrong_questions', [])  # セッションから間違えた問題のIDを取得
-    questions_ids = request.session.get('questions', [])  # セッションから出題された問題のIDを取得
+    score = request.session.get('score', 0)
+    wrong_question_ids = request.session.get('wrong_questions', [])
+    questions_ids = request.session.get('questions', [])
 
-    # データベースから問題を取得
-    questions = Question.objects.filter(id__in=questions_ids)  # 出題された問題
-    wrong_questions = Question.objects.filter(id__in=wrong_question_ids)  # 間違えた問題
+    questions = Question.objects.filter(id__in=questions_ids)
+    wrong_questions = Question.objects.filter(id__in=wrong_question_ids)
 
-    # 間違えた問題を辞書形式で処理（解説付き）
     wrong_questions_data = [
         {
             'text': question.text,
-            'explanation': question.explanation,  # 解説を含める
-            'correct_answer': question.correct_answer  # 正解も含める
+            'explanation': question.explanation,
+            'correct_answer': question.correct_answer
         }
         for question in wrong_questions
     ]
 
-    # デバッグ用のログ出力
-    print("Debug: Questions =", questions)
-    print("Debug: Wrong Questions =", wrong_questions)
+    total_score = len(questions) * 10
+    score_percent = (score / total_score) * 100 if total_score > 0 else 0
 
-    total_score = len(questions) * 10  # 各問題10点満点として総得点を計算
-    score_percent = (score / total_score) * 100 if total_score > 0 else 0  # パーセンテージを計算
-
-    # アドバイスの例
     if score_percent == 100:
         advice = "素晴らしい！完全に理解しています！"
     elif score_percent >= 80:
@@ -142,12 +115,11 @@ def result_view(request):
     else:
         advice = "復習が必要です。間違えた問題を確認しましょう。"
 
-    # 結果をテンプレートに渡してレンダリング
     return render(request, 'mathquiz/result.html', {
         'score': score,
         'total_score': total_score,
         'score_percent': score_percent,
-        'wrong_questions': wrong_questions_data,  # 修正: 辞書形式で解説を渡す
+        'wrong_questions': wrong_questions_data,
         'questions': questions,
         'advice': advice
     })
