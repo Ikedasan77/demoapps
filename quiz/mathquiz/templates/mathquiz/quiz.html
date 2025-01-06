@@ -126,7 +126,7 @@
             // 質問番号と問題文を表示
             document.getElementById('question-number').textContent = currentQuestionIndex + 1;
             document.getElementById('question-text').innerHTML = `\\( ${question.text} \\)`;
-    
+
             // MathJaxで問題をレンダリング
             MathJax.typesetPromise().catch(err => console.error("MathJax rendering error:", err));
 
@@ -211,5 +211,37 @@
         // ページロード時に最初の質問を表示
         document.addEventListener("DOMContentLoaded", loadQuestion);
     </script>
+
+<style>
+    /* 問題文が長い場合に自動で改行するスタイル */
+    #question-text {
+        white-space: normal; /* 折り返しを有効にする */
+        word-break: break-word; /* 長い単語も折り返し */
+        font-size: 1.2em; /* 読みやすいサイズ */
+        line-height: 1.6; /* 行間を調整 */
+    }
+
+    /* 選択肢のスタイル */
+    .choice {
+        padding: 10px;
+        margin: 5px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: center;
+    }
+
+    .choice:hover {
+        background-color: #f0f0f0;
+    }
+
+    /* 解説のLaTeXスタイル */
+    #explanation-text {
+        font-size: 1.1em;
+        line-height: 1.6;
+        white-space: normal;
+        word-break: break-word;
+    }
+</style>
 </body>
 </html>
