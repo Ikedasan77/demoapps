@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Question
 import random
 from django.http import JsonResponse
-import json  # jsonモジュールのインポート
+import json  # JSONモジュールのインポート
 
 # 回答の正規化
 def normalize_answer(answer):
@@ -40,8 +40,9 @@ def quiz_view(request):
                 'id': question.id,  # 問題のID
                 'text': question.text,  # 問題文
                 'choices': all_choices,  # ランダムに並び替えた選択肢
-                'correctAnswer': question.correct_answer,  # 正解
+                'correct_answer': question.correct_answer,  # 正解
                 'category': question.category.name if question.category else '',  # 単元名（任意）
+                'explanation': question.explanation or ''  # 解説（任意）
             })
 
         # JSON形式で問題データを渡す
@@ -98,7 +99,7 @@ def result_view(request):
     wrong_questions_data = [
         {
             'text': question.text,
-            'explanation': question.explanation,
+            'explanation': question.explanation or '解説はありません。',
             'correct_answer': question.correct_answer
         }
         for question in wrong_questions

@@ -45,7 +45,7 @@
             height: 50px;
             line-height: 50px;
             text-align: center;
-            border-radius: 50%;
+            border-radius: 20%;
             margin: 0 auto 10px;
         }
         .question-text {
@@ -109,87 +109,106 @@
     </div>
 
     <script>
-        let currentQuestionIndex = 0;
-
         // Djangoからのデータを取得
         const questions = JSON.parse(`{{ questions|safe|escapejs }}`);
 
+        // デバッグ用：取得したデータをコンソールに出力
+        console.log("Questions data:", questions);
+
+        // 現在の質問のインデックス
+        let currentQuestionIndex = 0;
+
+        // 質問をロードする関数
         function loadQuestion() {
+            // 現在の質問を取得
             const question = questions[currentQuestionIndex];
+
+            // 質問番号と問題文を表示
             document.getElementById('question-number').textContent = currentQuestionIndex + 1;
             document.getElementById('question-text').innerHTML = `\\( ${question.text} \\)`;
-
-            // MathJaxでレンダリング
+    
+            // MathJaxで問題をレンダリング
             MathJax.typesetPromise().catch(err => console.error("MathJax rendering error:", err));
 
+            // 選択肢を生成
             const choicesContainer = document.getElementById('choices');
-            choicesContainer.innerHTML = '';
+            choicesContainer.innerHTML = ''; // 選択肢をリセット
+
             question.choices.forEach(choice => {
                 const choiceDiv = document.createElement('div');
-                choiceDiv.innerHTML = `\\( ${choice} \\)`; // LaTeXを埋め込む
+                choiceDiv.innerHTML = `\\( ${choice} \\)`; // LaTeX形式で選択肢を表示
                 choiceDiv.className = 'choice';
-                choiceDiv.onclick = () => submitAnswer(choice, question.correct_answer);
+                choiceDiv.onclick = () => submitAnswer(choice, question.correct_answer); // 解答処理関数を設定
                 choicesContainer.appendChild(choiceDiv);
             });
 
-            // MathJaxで選択肢を再レンダリング
+            // 選択肢をMathJaxで再レンダリング
             MathJax.typesetPromise().catch(err => console.error("MathJax rendering error:", err));
         }
 
+        // 解答の送信処理
         function submitAnswer(selectedAnswer, correctAnswer) {
-    if (!correctAnswer) {
-        console.error("Correct Answer is undefined. Please check your data.");
-        return;
-    }
+            // 正解データが未定義の場合のエラーチェック
+            if (!correctAnswer) {
+                console.error("Correct Answer is undefined. Please check your data.");
+                return;
+            }
 
-        // LaTeXを使った文字列比較の正確性を向上
-        const sanitizedSelectedAnswer = selectedAnswer.replace(/\\\(/g, "").replace(/\\\)/g, "").trim();
-        const sanitizedCorrectAnswer = correctAnswer.replace(/\\\(/g, "").replace(/\\\)/g, "").trim();
+            // 選択肢と正解データのサニタイズ（余分な文字を削除して比較）
+            const sanitize = (str) => str.replace(/\\\(/g, "").replace(/\\\)/g, "").trim();
+            const sanitizedSelectedAnswer = sanitize(selectedAnswer);
+            const sanitizedCorrectAnswer = sanitize(correctAnswer);
 
-        console.log("Sanitized Selected Answer:", sanitizedSelectedAnswer);
-        console.log("Sanitized Correct Answer:", sanitizedCorrectAnswer);
+            console.log("Sanitized Selected Answer:", sanitizedSelectedAnswer);
+            console.log("Sanitized Correct Answer:", sanitizedCorrectAnswer);
 
-        const isCorrect = sanitizedSelectedAnswer === sanitizedCorrectAnswer;
-        console.log("Is Correct:", isCorrect);
+            // 正誤判定
+            const isCorrect = sanitizedSelectedAnswer === sanitizedCorrectAnswer;
+            console.log("Is Correct:", isCorrect);
 
-        const choices = document.querySelectorAll('.choice');
-        choices.forEach(choice => {
-        // 選択肢のLaTeXをサニタイズして比較
-        const choiceContent = choice.innerHTML.replace(/\\\(/g, "").replace(/\\\)/g, "").trim();
+            // 選択肢の背景色を変更（正解は緑、不正解は赤）
+            const choices = document.querySelectorAll('.choice');
+            choices.forEach(choice => {
+                const choiceContent = sanitize(choice.innerHTML);
 
-        if (choiceContent === sanitizedCorrectAnswer) {
-            choice.style.backgroundColor = "#C8E6C9"; // 正解は緑色
-        } else if (choiceContent === sanitizedSelectedAnswer) {
-            choice.style.backgroundColor = "#FFCDD2"; // 不正解は赤色
+                if (choiceContent === sanitizedCorrectAnswer) {
+                    choice.style.backgroundColor = "#C8E6C9"; // 緑色: 正解
+                } else if (choiceContent === sanitizedSelectedAnswer) {
+                    choice.style.backgroundColor = "#FFCDD2"; // 赤色: 不正解
+                }
+                choice.onclick = null; // 再クリックを無効化
+            });
+
+            // 結果メッセージと解説を表示
+            const resultMessage = isCorrect ? "正解です！" : "不正解です。";
+            const explanation = questions[currentQuestionIndex].explanation || "解説はありません。";
+
+            document.getElementById('result-message').textContent = resultMessage;
+            document.getElementById('explanation-text').textContent = `解説: ${explanation}`;
+
+            // 解説画面への切り替え
+            setTimeout(() => {
+                document.getElementById('question-section').style.display = "none";
+                document.getElementById('explanation-section').style.display = "block";
+            }, 1000);
         }
-        choice.onclick = null; // クリックを無効化
-    });
 
-    const resultMessage = isCorrect ? "正解です！" : "不正解です。";
-    const explanation = questions[currentQuestionIndex].explanation || "解説はありません。";
-
-    document.getElementById('result-message').textContent = resultMessage;
-    document.getElementById('explanation-text').textContent = `解説: ${explanation}`;
-
-    setTimeout(() => {
-        document.getElementById('question-section').style.display = "none";
-        document.getElementById('explanation-section').style.display = "block";
-    }, 1000);
-        }
-
+        // 次の質問に進む処理
         function goToNextQuestion() {
             currentQuestionIndex++;
 
             if (currentQuestionIndex < questions.length) {
+                // 次の質問を表示
                 document.getElementById('question-section').style.display = "block";
                 document.getElementById('explanation-section').style.display = "none";
                 loadQuestion();
             } else {
+                // 結果ページへリダイレクト
                 window.location.href = "/results/";
             }
         }
 
-        // 初期ロード
+        // ページロード時に最初の質問を表示
         document.addEventListener("DOMContentLoaded", loadQuestion);
     </script>
 </body>
