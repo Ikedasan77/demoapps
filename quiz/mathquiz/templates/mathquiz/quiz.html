@@ -109,106 +109,89 @@
     </div>
 
     <script>
-        // Djangoからのデータを取得
         const questions = JSON.parse(`{{ questions|safe|escapejs }}`);
-
-        // デバッグ用：取得したデータをコンソールに出力
         console.log("Questions data:", questions);
-
-        // 現在の質問のインデックス
+    
         let currentQuestionIndex = 0;
-
-        // 質問をロードする関数
+    
         function loadQuestion() {
-            // 現在の質問を取得
             const question = questions[currentQuestionIndex];
-
-            // 質問番号と問題文を表示
+    
             document.getElementById('question-number').textContent = currentQuestionIndex + 1;
             document.getElementById('question-text').innerHTML = `\\( ${question.text} \\)`;
-
-            // MathJaxで問題をレンダリング
+    
             MathJax.typesetPromise().catch(err => console.error("MathJax rendering error:", err));
-
-            // 選択肢を生成
+    
             const choicesContainer = document.getElementById('choices');
-            choicesContainer.innerHTML = ''; // 選択肢をリセット
-
+            choicesContainer.innerHTML = '';
+    
+            if (question.choices.length < 4) {
+                console.error(`Question ${currentQuestionIndex + 1} has insufficient choices:`, question.choices);
+            }
+    
             question.choices.forEach(choice => {
                 const choiceDiv = document.createElement('div');
-                choiceDiv.innerHTML = `\\( ${choice} \\)`; // LaTeX形式で選択肢を表示
+                choiceDiv.innerHTML = `\\( ${choice} \\)`;
                 choiceDiv.className = 'choice';
-                choiceDiv.onclick = () => submitAnswer(choice, question.correct_answer); // 解答処理関数を設定
+                choiceDiv.onclick = () => submitAnswer(choice, question.correct_answer);
                 choicesContainer.appendChild(choiceDiv);
             });
-
-            // 選択肢をMathJaxで再レンダリング
+    
             MathJax.typesetPromise().catch(err => console.error("MathJax rendering error:", err));
         }
-
-        // 解答の送信処理
+    
         function submitAnswer(selectedAnswer, correctAnswer) {
-            // 正解データが未定義の場合のエラーチェック
             if (!correctAnswer) {
                 console.error("Correct Answer is undefined. Please check your data.");
                 return;
             }
 
-            // 選択肢と正解データのサニタイズ（余分な文字を削除して比較）
             const sanitize = (str) => str.replace(/\\\(/g, "").replace(/\\\)/g, "").trim();
             const sanitizedSelectedAnswer = sanitize(selectedAnswer);
             const sanitizedCorrectAnswer = sanitize(correctAnswer);
 
-            console.log("Sanitized Selected Answer:", sanitizedSelectedAnswer);
-            console.log("Sanitized Correct Answer:", sanitizedCorrectAnswer);
-
-            // 正誤判定
             const isCorrect = sanitizedSelectedAnswer === sanitizedCorrectAnswer;
-            console.log("Is Correct:", isCorrect);
 
-            // 選択肢の背景色を変更（正解は緑、不正解は赤）
             const choices = document.querySelectorAll('.choice');
             choices.forEach(choice => {
                 const choiceContent = sanitize(choice.innerHTML);
-
                 if (choiceContent === sanitizedCorrectAnswer) {
-                    choice.style.backgroundColor = "#C8E6C9"; // 緑色: 正解
+                    choice.style.backgroundColor = "#C8E6C9";
                 } else if (choiceContent === sanitizedSelectedAnswer) {
-                    choice.style.backgroundColor = "#FFCDD2"; // 赤色: 不正解
+                    choice.style.backgroundColor = "#FFCDD2";
                 }
-                choice.onclick = null; // 再クリックを無効化
+                choice.onclick = null;
             });
 
-            // 結果メッセージと解説を表示
             const resultMessage = isCorrect ? "正解です！" : "不正解です。";
             const explanation = questions[currentQuestionIndex].explanation || "解説はありません。";
 
+            // 解説部分のレンダリング
             document.getElementById('result-message').textContent = resultMessage;
-            document.getElementById('explanation-text').textContent = `解説: ${explanation}`;
+            document.getElementById('explanation-text').innerHTML = `\\[ ${explanation} \\]`; // LaTeX形式で囲む
 
-            // 解説画面への切り替え
+            // 解説部分をMathJaxで再レンダリング
+            MathJax.typesetPromise([document.getElementById('explanation-text')]).catch(err => {
+                console.error("MathJax rendering error in explanation:", err);
+            });
+
             setTimeout(() => {
                 document.getElementById('question-section').style.display = "none";
                 document.getElementById('explanation-section').style.display = "block";
             }, 1000);
         }
 
-        // 次の質問に進む処理
         function goToNextQuestion() {
             currentQuestionIndex++;
-
             if (currentQuestionIndex < questions.length) {
-                // 次の質問を表示
                 document.getElementById('question-section').style.display = "block";
                 document.getElementById('explanation-section').style.display = "none";
                 loadQuestion();
             } else {
-                // 結果ページへリダイレクト
                 window.location.href = "/results/";
             }
         }
 
-        // ページロード時に最初の質問を表示
         document.addEventListener("DOMContentLoaded", loadQuestion);
     </script>
 

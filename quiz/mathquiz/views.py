@@ -32,6 +32,11 @@ def quiz_view(request):
             incorrect_choices = [choice.text for choice in question.incorrect_choices.all()]
             # 正解を追加
             all_choices = incorrect_choices + [question.correct_answer]
+
+            # **選択肢が4つ未満の場合に警告を出力**
+            if len(all_choices) < 4:
+                print(f"問題ID {question.id} の選択肢が不足しています: {all_choices}")
+
             # 選択肢をランダムに並び替え
             random.shuffle(all_choices)
 
