@@ -18,11 +18,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from mathquiz import views
 
 # プロジェクト全体のURLパターンを定義
 urlpatterns = [
-    path('admin/', admin.site.urls),  # 管理サイトのURL
-    path('', include('mathquiz.urls')),  # mathquizのURLを含める
+    path('admin/', admin.site.urls),  # 管理サイト
+    path('', views.home, name='home'),  # ホームページ
+    path('quiz/', views.quiz_view, name='quiz'),  # クイズページ
+    path('quiz/submit/', views.submit_quiz_view, name='submit_quiz'),  # クイズ送信
+    path('results/', views.result_view, name='results'),  # 結果ページ  # 結果ページ
 ]
 
 # 静的ファイルを開発環境で提供するための設定

@@ -13,83 +13,7 @@
         defer
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
     </script>
-    <style>
-        body {
-            background: linear-gradient(to right, #00AEEF, #00AEEF) no-repeat, #f5f5f5;
-            background-size: 100vw 100%;
-            font-family: 'Noto Sans JP', sans-serif;
-        }
-        .quiz-container {
-            background-color: #2F4F4F;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 900px;
-            margin: 40px auto;
-            color: #ffffff;
-        }
-        .question-container {
-            background-color: #2E8B57;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            border: 4px solid #1C5E3B;
-        }
-        .question-number {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: white;
-            background-color: #FF7043;
-            width: 50px;
-            height: 50px;
-            line-height: 50px;
-            text-align: center;
-            border-radius: 20%;
-            margin: 0 auto 10px;
-        }
-        .question-text {
-            font-size: 1.4rem;
-            color: #F0F8FF;
-            margin-bottom: 15px;
-        }
-        .choices {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .choice {
-            background-color: #FFFFFF;
-            color: #000;
-            border-radius: 5px;
-            padding: 15px;
-            margin: 10px 0;
-            cursor: pointer;
-            font-size: 1.2rem;
-            text-align: center;
-            word-wrap: break-word;
-            word-break: break-word;
-            border: 1px solid #ccc;
-            width: 80%;
-            transition: background-color 0.3s;
-        }
-        .choice:hover {
-            background-color: #F0F0F0;
-        }
-        button {
-            background-color: #4682B4;
-            color: white;
-            border-radius: 5px;
-            padding: 10px 20px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-        button:hover {
-            background-color: #5A9BD4;
-        }
-    </style>
+    
 </head>
 <body>
     <div class="quiz-container">
@@ -152,26 +76,13 @@
 
             const isCorrect = sanitizedSelectedAnswer === sanitizedCorrectAnswer;
 
-            const choices = document.querySelectorAll('.choice');
-            choices.forEach(choice => {
-                const choiceContent = sanitize(choice.innerHTML);
-                if (choiceContent === sanitizedCorrectAnswer) {
-                    choice.style.backgroundColor = "#C8E6C9";
-                } else if (choiceContent === sanitizedSelectedAnswer) {
-                    choice.style.backgroundColor = "#FFCDD2";
-                }
-                choice.onclick = null;
-            });
-
             const resultMessage = isCorrect ? "正解です！" : "不正解です。";
             const explanation = questions[currentQuestionIndex].explanation || "解説はありません。";
 
-            // 解説部分のレンダリング
-            document.getElementById('result-message').textContent = resultMessage;
-            document.getElementById('explanation-text').innerHTML = `\\[ ${explanation} \\]`; // LaTeX形式で囲む
+            document.getElementById("result-message").textContent = resultMessage;
+            document.getElementById("explanation-text").innerHTML = `\\[ ${explanation} \\]`;
 
-            // 解説部分をMathJaxで再レンダリング
-            MathJax.typesetPromise([document.getElementById('explanation-text')]).catch(err => {
+            MathJax.typesetPromise([document.getElementById("explanation-text")]).catch(err => {
                 console.error("MathJax rendering error in explanation:", err);
             });
 
@@ -194,37 +105,5 @@
 
         document.addEventListener("DOMContentLoaded", loadQuestion);
     </script>
-
-<style>
-    /* 問題文が長い場合に自動で改行するスタイル */
-    #question-text {
-        white-space: normal; /* 折り返しを有効にする */
-        word-break: break-word; /* 長い単語も折り返し */
-        font-size: 1.2em; /* 読みやすいサイズ */
-        line-height: 1.6; /* 行間を調整 */
-    }
-
-    /* 選択肢のスタイル */
-    .choice {
-        padding: 10px;
-        margin: 5px 0;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        cursor: pointer;
-        text-align: center;
-    }
-
-    .choice:hover {
-        background-color: #f0f0f0;
-    }
-
-    /* 解説のLaTeXスタイル */
-    #explanation-text {
-        font-size: 1.1em;
-        line-height: 1.6;
-        white-space: normal;
-        word-break: break-word;
-    }
-</style>
 </body>
 </html>
