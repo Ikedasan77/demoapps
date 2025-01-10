@@ -4,27 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="icon" href="{% static 'favicon.ico' %}">
     <title>計算アプリ</title>
-    <!-- MathJax スクリプト -->
     <script
         type="text/javascript"
         defer
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
     </script>
-    
 </head>
 <body>
     <div class="quiz-container">
         <div id="question-section" class="question-container">
-            <span class="question-number" id="question-number">1</span>
-            <p class="question-text" id="question-text"></p>
+            <span id="question-number" class="question-number">1</span>
+            <p id="question-text"></p>
             <div id="choices" class="choices">
                 <!-- 選択肢がここに挿入されます -->
             </div>
         </div>
-
+        
+        <!-- 解説を表示する部分 -->
         <div id="explanation-section" class="question-container" style="display: none;">
             <p id="result-message" class="text-lg font-bold"></p>
             <p id="explanation-text" class="question-text"></p>
@@ -34,76 +33,46 @@
 
     <script>
         const questions = JSON.parse(`{{ questions|safe|escapejs }}`);
-        console.log("Questions data:", questions);
-    
         let currentQuestionIndex = 0;
-    
+
         function loadQuestion() {
             const question = questions[currentQuestionIndex];
-    
             document.getElementById('question-number').textContent = currentQuestionIndex + 1;
             document.getElementById('question-text').innerHTML = `\\( ${question.text} \\)`;
-    
-            MathJax.typesetPromise().catch(err => console.error("MathJax rendering error:", err));
-    
             const choicesContainer = document.getElementById('choices');
             choicesContainer.innerHTML = '';
-    
-            if (question.choices.length < 4) {
-                console.error(`Question ${currentQuestionIndex + 1} has insufficient choices:`, question.choices);
-            }
-    
             question.choices.forEach(choice => {
-                const choiceDiv = document.createElement('div');
-                choiceDiv.innerHTML = `\\( ${choice} \\)`;
-                choiceDiv.className = 'choice';
-                choiceDiv.onclick = () => submitAnswer(choice, question.correct_answer);
-                choicesContainer.appendChild(choiceDiv);
+                const div = document.createElement('div');
+                div.className = 'choice';
+                div.innerHTML = `\\( ${choice} \\)`;
+                div.onclick = () => submitAnswer(choice, question.correct_answer);
+                choicesContainer.appendChild(div);
             });
-    
-            MathJax.typesetPromise().catch(err => console.error("MathJax rendering error:", err));
+            MathJax.typesetPromise();
         }
-    
-        function submitAnswer(selectedAnswer, correctAnswer) {
-            if (!correctAnswer) {
-                console.error("Correct Answer is undefined. Please check your data.");
-                return;
-            }
 
-            const sanitize = (str) => str.replace(/\\\(/g, "").replace(/\\\)/g, "").trim();
-            const sanitizedSelectedAnswer = sanitize(selectedAnswer);
-            const sanitizedCorrectAnswer = sanitize(correctAnswer);
-
-            const isCorrect = sanitizedSelectedAnswer === sanitizedCorrectAnswer;
-
-            const resultMessage = isCorrect ? "正解です！" : "不正解です。";
+        function submitAnswer(selected, correct) {
+            const result = selected === correct ? "正解です！" : "不正解です。";
+            document.getElementById('result-message').textContent = result;
             const explanation = questions[currentQuestionIndex].explanation || "解説はありません。";
-
-            document.getElementById("result-message").textContent = resultMessage;
-            document.getElementById("explanation-text").innerHTML = `\\[ ${explanation} \\]`;
-
-            MathJax.typesetPromise([document.getElementById("explanation-text")]).catch(err => {
-                console.error("MathJax rendering error in explanation:", err);
-            });
-
-            setTimeout(() => {
-                document.getElementById('question-section').style.display = "none";
-                document.getElementById('explanation-section').style.display = "block";
-            }, 1000);
+            document.getElementById('explanation-text').innerHTML = `\\[ ${explanation} \\]`;
+            document.getElementById('question-section').style.display = 'none';
+            document.getElementById('explanation-section').style.display = 'block';
+            MathJax.typesetPromise();
         }
 
         function goToNextQuestion() {
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
-                document.getElementById('question-section').style.display = "block";
-                document.getElementById('explanation-section').style.display = "none";
+                document.getElementById('question-section').style.display = 'block';
+                document.getElementById('explanation-section').style.display = 'none';
                 loadQuestion();
             } else {
-                window.location.href = "/results/";
+                window.location.href = '/results/';
             }
         }
 
-        document.addEventListener("DOMContentLoaded", loadQuestion);
+        document.addEventListener('DOMContentLoaded', loadQuestion);
     </script>
 </body>
 </html>
