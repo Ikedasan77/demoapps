@@ -21,21 +21,24 @@
     </script>
 </head>
 <body>
-    <div class="quiz-container">
-        <!-- 問題部分 -->
-        <div id="question-section" class="question-container">
-            <span id="question-number" class="question-number">1</span>
-            <p id="question-text"></p>
-            <div id="choices" class="choices">
-                <!-- 選択肢がここに挿入されます -->
+    <!-- 白い背景で全体をラップ -->
+    <div class="white-background">
+        <div class="quiz-container">
+            <!-- 問題部分 -->
+            <div id="question-section" class="question-container">
+                <span id="question-number" class="question-number">1</span>
+                <p id="question-text"></p>
+                <div id="choices" class="choices">
+                    <!-- 選択肢がここに挿入されます -->
+                </div>
             </div>
-        </div>
 
-        <!-- 解説部分 -->
-        <div id="explanation-section" class="question-container" style="display: none;">
-            <p id="result-message" class="text-lg font-bold"></p>
-            <p id="explanation-text" class="question-text"></p>
-            <button onclick="goToNextQuestion()">次の問題へ</button>
+            <!-- 解説部分 -->
+            <div id="explanation-section" class="question-container" style="display: none;">
+                <p id="result-message" class="text-lg font-bold"></p>
+                <p id="explanation-text" class="question-text"></p>
+                <button onclick="goToNextQuestion()">次の問題へ</button>
+            </div>
         </div>
     </div>
 

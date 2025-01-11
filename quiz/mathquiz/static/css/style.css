@@ -1,40 +1,87 @@
+/* 全体の背景色とフォント設定 */
 body {
-    background-color: #d9f2ff; /* 背景色を水色に設定 */
+    background-color: #00AAEF; /* 水色の背景 */
     font-family: Arial, sans-serif;
-    color: #000; /* テキスト色を黒に設定 */
+    color: #FFFFFF; /* 白いテキスト */
+    margin: 0;
+    padding: 0;
 }
 
-.quiz-container {
-    background-color: #4CAF50; /* 緑色の背景 */
+/* 白い背景を作成 */
+.white-background {
+    background-color: #FFFFFF; /* 白い背景 */
     padding: 20px;
-    margin: 50px auto;
+    margin: 30px auto; /* 上下の余白を追加 */
+    max-width: 900px; /* 最大幅を設定 */
+}
+
+/* 全体の中央揃えとスタイリング */
+.quiz-container {
+    background-color: #4CAF50; /* 緑の背景 */
+    border: 5px solid #6b4226; /* 木枠風の濃い茶色 */
+    padding: 20px;
+    margin: 0 auto; /* 外側のマージンは白背景で調整 */
     max-width: 800px;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 軽い影をつける */
+    color: #FFFFFF; /* 白いテキスト */
+    text-align: center; /* 中央揃え */
 }
 
+/* 問題番号やテキスト */
+.question-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+#question-text {
+    font-size: 1.2rem;
+    margin: 20px 0;
+}
+
+/* 選択肢ボタンのデザイン */
 .choice {
     background-color: #8B0000; /* 赤色 */
-    color: white;
-    padding: 10px;
+    color: #FFFFFF; /* 白文字 */
+    padding: 15px;
     margin: 10px 0;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 1.2rem;
+    border: none;
+    display: block; /* ブロック要素にして幅を最大化 */
+    width: 80%; /* 幅を調整 */
+    margin: 10px auto; /* 中央揃え */
 }
 
 .choice:hover {
-    background-color: #FF4500;
+    background-color: #FF4500; /* オレンジ色 */
 }
 
-/* 解説部分のスタイルを改良 */
+/* 解説部分のデザイン */
 #explanation-section {
-    word-wrap: break-word;       /* 長い単語を折り返す */
-    white-space: pre-wrap;       /* 改行を維持しつつ折り返す */
-    overflow-wrap: break-word;   /* 長い単語を自動的に折り返す */
-    max-width: 90%;              /* 解説部分の横幅を制限 */
-    margin: auto;                /* 中央揃え */
+    background-color: #4CAF50; /* 緑色の背景 */
+    color: #FFFFFF; /* 白いテキスト */
     padding: 20px;
     border-radius: 10px;
-    background-color: #4CAF50;   /* 緑色の背景 */
-    color: white;                /* テキスト色を白に設定 */
+    margin: 20px auto;
+    max-width: 800px;
+    word-wrap: break-word; /* 長い単語を折り返す */
+    white-space: pre-wrap; /* 改行を維持しつつ折り返し */
+    overflow-wrap: break-word; /* 長い単語を自動的に折り返す */
+}
+
+/* 次の問題ボタン */
+button {
+    background-color: #008CBA; /* 青色 */
+    color: #FFFFFF; /* 白文字 */
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #005F7A; /* 濃い青色 */
 }
