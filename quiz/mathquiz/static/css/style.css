@@ -1,11 +1,11 @@
 body {
-    background-color: #3b3b3b;
+    background-color: #d9f2ff; /* 背景色を水色に設定 */
     font-family: Arial, sans-serif;
-    color: #fff;
+    color: #000; /* テキスト色を黒に設定 */
 }
 
 .quiz-container {
-    background-color: #4CAF50;
+    background-color: #4CAF50; /* 緑色の背景 */
     padding: 20px;
     margin: 50px auto;
     max-width: 800px;
@@ -14,7 +14,7 @@ body {
 }
 
 .choice {
-    background-color: #8B0000;
+    background-color: #8B0000; /* 赤色 */
     color: white;
     padding: 10px;
     margin: 10px 0;
@@ -26,15 +26,15 @@ body {
     background-color: #FF4500;
 }
 
-/* 解説ボックスのスタイル */
+/* 解説部分のスタイルを改良 */
 #explanation-section {
-    word-wrap: break-word; /* 長い単語を折り返す */
-    white-space: pre-wrap; /* 改行を維持しつつ折り返し */
-    overflow-wrap: break-word; /* 長い単語を自動的に折り返す */
-    max-width: 90%; /* 解説ボックスの横幅を制限 */
-    margin: auto; /* ボックスを中央揃え */
+    word-wrap: break-word;       /* 長い単語を折り返す */
+    white-space: pre-wrap;       /* 改行を維持しつつ折り返す */
+    overflow-wrap: break-word;   /* 長い単語を自動的に折り返す */
+    max-width: 90%;              /* 解説部分の横幅を制限 */
+    margin: auto;                /* 中央揃え */
     padding: 20px;
     border-radius: 10px;
-    background-color: #4caf50; /* 緑の背景色 */
-    color: white; /* テキスト色 */
+    background-color: #4CAF50;   /* 緑色の背景 */
+    color: white;                /* テキスト色を白に設定 */
 }

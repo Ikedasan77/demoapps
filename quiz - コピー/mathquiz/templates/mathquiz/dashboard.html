@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ダッシュボード</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* 背景全体の設定 */
+        body {
+            background-color: #dff5f2; /* 水色の背景 */
+        }
+
+        /* 情報セクションのデザイン */
+        .info-box {
+            background-color: #4caf50; /* 緑色の背景 */
+            border: 5px solid #6b4226; /* 木枠のような濃い茶色の枠 */
+            border-radius: 10px; /* 枠を少し丸める */
+            padding: 2rem; /* 内側の余白を設定 */
+            color: white; /* テキストを白色に */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 影を追加 */
+            font-size: 1.25rem; /* 文字を大きく設定 */
+        }
+
+        /* グラフセクションのデザイン */
+        .chart-box {
+            background-color: #4caf50; /* 緑色の背景 */
+            border: 5px solid #6b4226; /* 木枠のような濃い茶色の枠 */
+            border-radius: 10px; /* 枠を少し丸める */
+            padding: 2rem; /* 内側の余白を設定 */
+            color: white; /* テキストを白色に */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 影を追加 */
+            font-size: 1.25rem; /* 文字を大きく設定 */
+        }
+
+        /* 全体の幅調整 */
+        .container {
+            max-width: 1000px; /* 幅を広く設定 */
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="bg-blue-500 text-white py-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">ダッシュボード</h1>
+            <a href="/logout/" class="bg-red-500 px-4 py-2 rounded text-lg">ログアウト</a>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="container mx-auto p-6">
+        <!-- 各情報セクション -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="info-box">
+                <h2 class="text-2xl font-bold">連続学習日数</h2>
+                <p class="text-5xl font-bold">15日</p>
+            </div>
+            <div class="info-box">
+                <h2 class="text-2xl font-bold">総学習日数</h2>
+                <p class="text-5xl font-bold">120日</p>
+            </div>
+            <div class="info-box">
+                <h2 class="text-2xl font-bold">完了した単元数</h2>
+                <p class="text-5xl font-bold">8</p>
+            </div>
+            <div class="info-box">
+                <h2 class="text-2xl font-bold">1週間の平均点</h2>
+                <p class="text-5xl font-bold">85%</p>
+            </div>
+        </div>
+
+        <!-- グラフセクション -->
+        <div class="chart-box mt-6">
+            <h2 class="text-2xl font-bold mb-4">平均点の推移</h2>
+            <canvas id="scoreChart"></canvas>
+        </div>
+    </main>
+
+    <!-- グラフのスクリプト -->
+    <script>
+        const ctx = document.getElementById('scoreChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['月', '火', '水', '木', '金', '土', '日'],
+                datasets: [{
+                    label: '平均点 (%)',
+                    data: [80, 85, 88, 90, 92, 85, 87],
+                    borderColor: 'rgba(255, 165, 0, 1)', /* オレンジ色の線 */
+                    backgroundColor: 'rgba(255, 165, 0, 0.2)', /* 背景の淡いオレンジ */
+                    borderWidth: 3,
+                    pointBackgroundColor: 'rgba(255, 69, 0, 1)', /* 点の色を濃いオレンジ */
+                    fill: true /* 線の下を塗りつぶし */
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { font: { size: 14 } } /* Y軸の文字サイズ */
+                    },
+                    x: {
+                        ticks: { font: { size: 14 } } /* X軸の文字サイズ */
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

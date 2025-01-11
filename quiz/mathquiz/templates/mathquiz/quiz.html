@@ -4,9 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- 外部CSSを読み込む -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <!-- faviconを読み込む -->
     <link rel="icon" href="{% static 'favicon.ico' %}">
+    
     <title>計算アプリ</title>
+
+    <!-- MathJaxライブラリ -->
     <script
         type="text/javascript"
         defer
@@ -15,6 +22,7 @@
 </head>
 <body>
     <div class="quiz-container">
+        <!-- 問題部分 -->
         <div id="question-section" class="question-container">
             <span id="question-number" class="question-number">1</span>
             <p id="question-text"></p>
@@ -22,8 +30,8 @@
                 <!-- 選択肢がここに挿入されます -->
             </div>
         </div>
-        
-        <!-- 解説を表示する部分 -->
+
+        <!-- 解説部分 -->
         <div id="explanation-section" class="question-container" style="display: none;">
             <p id="result-message" class="text-lg font-bold"></p>
             <p id="explanation-text" class="question-text"></p>
@@ -31,10 +39,12 @@
         </div>
     </div>
 
+    <!-- JavaScript -->
     <script>
         const questions = JSON.parse(`{{ questions|safe|escapejs }}`);
         let currentQuestionIndex = 0;
 
+        // 問題を読み込む関数
         function loadQuestion() {
             const question = questions[currentQuestionIndex];
             document.getElementById('question-number').textContent = currentQuestionIndex + 1;
@@ -48,19 +58,25 @@
                 div.onclick = () => submitAnswer(choice, question.correct_answer);
                 choicesContainer.appendChild(div);
             });
-            MathJax.typesetPromise();
+            MathJax.typesetPromise(); // MathJaxをレンダリング
         }
 
+        // 回答を処理する関数
         function submitAnswer(selected, correct) {
             const result = selected === correct ? "正解です！" : "不正解です。";
             document.getElementById('result-message').textContent = result;
+            
             const explanation = questions[currentQuestionIndex].explanation || "解説はありません。";
-            document.getElementById('explanation-text').innerHTML = `\\[ ${explanation} \\]`;
+            document.getElementById('explanation-text').innerHTML = `\\( ${explanation} \\)`;
+            
             document.getElementById('question-section').style.display = 'none';
             document.getElementById('explanation-section').style.display = 'block';
+
+            // MathJaxを再レンダリング
             MathJax.typesetPromise();
         }
 
+        // 次の問題に進む処理
         function goToNextQuestion() {
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
@@ -72,6 +88,7 @@
             }
         }
 
+        // ページが読み込まれたら最初の問題を表示
         document.addEventListener('DOMContentLoaded', loadQuestion);
     </script>
 </body>

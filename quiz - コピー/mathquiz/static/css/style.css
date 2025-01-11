@@ -1,0 +1,68 @@
+body {
+<<<<<<< HEAD
+    background-color: #d9f2ff; /* 背景色を水色に設定 */
+    font-family: Arial, sans-serif;
+    color: #000; /* テキスト色を黒に設定 */
+}
+
+.quiz-container {
+    background-color: #4CAF50; /* 緑色の背景 */
+=======
+    background-color: #3b3b3b;
+    font-family: Arial, sans-serif;
+    color: #fff;
+}
+
+.quiz-container {
+    background-color: #4CAF50;
+>>>>>>> 7da32999b041c5820f3595a97b9b0cbb812aa70f
+    padding: 20px;
+    margin: 50px auto;
+    max-width: 800px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.choice {
+<<<<<<< HEAD
+    background-color: #8B0000; /* 赤色 */
+=======
+    background-color: #8B0000;
+>>>>>>> 7da32999b041c5820f3595a97b9b0cbb812aa70f
+    color: white;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.choice:hover {
+    background-color: #FF4500;
+}
+
+<<<<<<< HEAD
+/* 解説部分のスタイルを改良 */
+#explanation-section {
+    word-wrap: break-word;       /* 長い単語を折り返す */
+    white-space: pre-wrap;       /* 改行を維持しつつ折り返す */
+    overflow-wrap: break-word;   /* 長い単語を自動的に折り返す */
+    max-width: 90%;              /* 解説部分の横幅を制限 */
+    margin: auto;                /* 中央揃え */
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #4CAF50;   /* 緑色の背景 */
+    color: white;                /* テキスト色を白に設定 */
+=======
+/* 解説ボックスのスタイル */
+#explanation-section {
+    word-wrap: break-word; /* 長い単語を折り返す */
+    white-space: pre-wrap; /* 改行を維持しつつ折り返し */
+    overflow-wrap: break-word; /* 長い単語を自動的に折り返す */
+    max-width: 90%; /* 解説ボックスの横幅を制限 */
+    margin: auto; /* ボックスを中央揃え */
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #4caf50; /* 緑の背景色 */
+    color: white; /* テキスト色 */
+>>>>>>> 7da32999b041c5820f3595a97b9b0cbb812aa70f
+}

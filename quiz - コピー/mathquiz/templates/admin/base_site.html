@@ -1,0 +1,77 @@
+{% extends "admin/base_site.html" %}  <!-- Djangoデフォルトの管理サイトのテンプレートを継承 -->
+
+<!-- サイトタイトルのカスタマイズ -->
+{% block title %}カスタム管理サイト{% endblock %}
+
+<!-- ヘッダー部分のカスタマイズ -->
+{% block branding %}
+    <h1 id="site-name">
+        <a href="{% url 'admin:index' %}">カスタム管理サイト</a> <!-- 管理サイトのタイトルを変更 -->
+    </h1>
+{% endblock %}
+
+<!-- 管理サイトの外部スクリプトやスタイルを追加 -->
+{% block extrahead %}
+    {{ block.super }}  <!-- デフォルトの設定を保持 -->
+
+    <!-- MathJaxのカスタム設定とスクリプトの読み込み -->
+    <script type="text/javascript">
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],  // インライン数式
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]  // ブロック数式
+            },
+            options: {
+                renderActions: {
+                    addMenu: [0, '', '']  // メニューオプション無効化（高速化のため）
+                }
+            }
+        };
+    </script>
+    <script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
+    </script>
+
+    <!-- latex_preview.js の読み込み -->
+    <script type="text/javascript" src="{% static 'admin/js/latex_preview.js' %}"></script>
+
+    <!-- カスタムスタイル -->
+    <style>
+        /* 管理画面の背景色をカスタマイズ */
+        body {
+            background-color: #f0f8ff; /* 薄い青色 */
+        }
+
+        /* ヘッダーのスタイル変更 */
+        #site-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007acc; /* 明るい青 */
+        }
+
+        /* リンクのカスタマイズ */
+        #site-name a {
+            text-decoration: none;
+        }
+
+        #site-name a:hover {
+            color: #005b99; /* 濃い青 */
+        }
+
+        /* MathJaxプレビュー用のスタイル */
+        .mathjax-preview {
+            margin-top: 10px;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+{% endblock %}
+
+<!-- フッター部分のカスタマイズ -->
+{% block footer %}
+    <div class="custom-footer">
+        <p>© 2024 カスタム管理サイト. All rights reserved.</p> <!-- カスタムフッターの表示 -->
+    </div>
+{% endblock %}

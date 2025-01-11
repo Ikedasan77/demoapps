@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
+    
+    <!-- 外部CSSを読み込む -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <!-- faviconを読み込む -->
+=======
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+>>>>>>> 7da32999b041c5820f3595a97b9b0cbb812aa70f
+    <link rel="icon" href="{% static 'favicon.ico' %}">
+    
+    <title>計算アプリ</title>
+<<<<<<< HEAD
+
+    <!-- MathJaxライブラリ -->
+=======
+>>>>>>> 7da32999b041c5820f3595a97b9b0cbb812aa70f
+    <script
+        type="text/javascript"
+        defer
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
+    </script>
+</head>
+<body>
+    <div class="quiz-container">
+        <!-- 問題部分 -->
+        <div id="question-section" class="question-container">
+            <span id="question-number" class="question-number">1</span>
+            <p id="question-text"></p>
+            <div id="choices" class="choices">
+                <!-- 選択肢がここに挿入されます -->
+            </div>
+        </div>
+<<<<<<< HEAD
+
+        <!-- 解説部分 -->
+=======
+        
+        <!-- 解説を表示する部分 -->
+>>>>>>> 7da32999b041c5820f3595a97b9b0cbb812aa70f
+        <div id="explanation-section" class="question-container" style="display: none;">
+            <p id="result-message" class="text-lg font-bold"></p>
+            <p id="explanation-text" class="question-text"></p>
+            <button onclick="goToNextQuestion()">次の問題へ</button>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        const questions = JSON.parse(`{{ questions|safe|escapejs }}`);
+        let currentQuestionIndex = 0;
+
+<<<<<<< HEAD
+        // 問題を読み込む関数
+=======
+>>>>>>> 7da32999b041c5820f3595a97b9b0cbb812aa70f
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            document.getElementById('question-number').textContent = currentQuestionIndex + 1;
+            document.getElementById('question-text').innerHTML = `\\( ${question.text} \\)`;
+            const choicesContainer = document.getElementById('choices');
+            choicesContainer.innerHTML = '';
+            question.choices.forEach(choice => {
+                const div = document.createElement('div');
+                div.className = 'choice';
+                div.innerHTML = `\\( ${choice} \\)`;
+                div.onclick = () => submitAnswer(choice, question.correct_answer);
+                choicesContainer.appendChild(div);
+            });
+<<<<<<< HEAD
+            MathJax.typesetPromise(); // MathJaxをレンダリング
+        }
+
+        // 回答を処理する関数
+        function submitAnswer(selected, correct) {
+            const result = selected === correct ? "正解です！" : "不正解です。";
+            document.getElementById('result-message').textContent = result;
+            
+            const explanation = questions[currentQuestionIndex].explanation || "解説はありません。";
+            document.getElementById('explanation-text').innerHTML = `\\( ${explanation} \\)`;
+            
+            document.getElementById('question-section').style.display = 'none';
+            document.getElementById('explanation-section').style.display = 'block';
+
+            // MathJaxを再レンダリング
+=======
+            MathJax.typesetPromise();
+        }
+
+        function submitAnswer(selected, correct) {
+            const result = selected === correct ? "正解です！" : "不正解です。";
+            document.getElementById('result-message').textContent = result;
+            const explanation = questions[currentQuestionIndex].explanation || "解説はありません。";
+            document.getElementById('explanation-text').innerHTML = `\\[ ${explanation} \\]`;
+            document.getElementById('question-section').style.display = 'none';
+            document.getElementById('explanation-section').style.display = 'block';
+>>>>>>> 7da32999b041c5820f3595a97b9b0cbb812aa70f
+            MathJax.typesetPromise();
+        }
+
+        // 次の問題に進む処理
+        function goToNextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                document.getElementById('question-section').style.display = 'block';
+                document.getElementById('explanation-section').style.display = 'none';
+                loadQuestion();
+            } else {
+                window.location.href = '/results/';
+            }
+        }
+
+<<<<<<< HEAD
+        // ページが読み込まれたら最初の問題を表示
+=======
+>>>>>>> 7da32999b041c5820f3595a97b9b0cbb812aa70f
+        document.addEventListener('DOMContentLoaded', loadQuestion);
+    </script>
+</body>
+</html>
