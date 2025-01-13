@@ -1,0 +1,87 @@
+/* 全体の背景色を設定 */
+body {
+    background-color: #00AAEF; /* 青い背景 */
+    font-family: Arial, sans-serif;
+    color: #FFFFFF;
+    margin: 0;
+    padding: 0;
+}
+
+/* 白い背景でラップ */
+.white-background {
+    background-color: #FFFFFF; /* 白い背景 */
+    padding: 20px;
+    border-radius: 15px; /* 角を丸くする */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* 軽い影を追加 */
+    margin: 30px auto;
+    max-width: 900px; /* 最大幅 */
+}
+
+/* 緑の黒板風の背景 */
+.quiz-container {
+    background-color: #4CAF50; /* 緑色 */
+    border: 5px solid #6B4226; /* 木枠風 */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    color: #FFFFFF;
+    text-align: center;
+    max-width: 500px; /* ログインフォームに合わせた幅 */
+    margin: auto;
+}
+
+/* テキスト中央揃え */
+.text-center {
+    text-align: center;
+}
+
+/* ログインフォームのスタイル */
+.form-container {
+    margin-top: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-label {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 5px;
+    color: #FFFFFF;
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+/* ボタンスタイル */
+.btn-primary {
+    background-color: #008CBA; /* 青色 */
+    color: #FFFFFF;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    background-color: #005F7A; /* 濃い青 */
+}
+
+/* リンクスタイル */
+.link-primary {
+    color: #008CBA;
+    text-decoration: underline;
+}
+
+.link-primary:hover {
+    color: #005F7A;
+}

@@ -26,6 +26,10 @@ SECRET_KEY = 'django-insecure-#y#(_(jarr_f23gu6=43%-b8f&-gtd@b91r00e2q9_0^q+et3v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# 静的ファイルの詳細ログを有効にする
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 ALLOWED_HOSTS = []
 
 

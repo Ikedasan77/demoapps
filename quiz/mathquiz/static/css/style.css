@@ -1,40 +1,88 @@
+/* 全体の背景色 */
 body {
-    background-color: #3b3b3b;
+    background-color: #dff5f2; /* 水色の背景 */
     font-family: Arial, sans-serif;
-    color: #fff;
+    margin: 0;
+    padding: 0;
 }
 
-.quiz-container {
-    background-color: #4CAF50;
+/* ヘッダーのスタイル */
+.header {
+    background-color: #4CAF50; /* 緑色 */
+    color: #FFFFFF;
     padding: 20px;
-    margin: 50px auto;
-    max-width: 800px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.choice {
-    background-color: #8B0000;
-    color: white;
-    padding: 10px;
-    margin: 10px 0;
+.dashboard-title {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.logout-button {
+    background-color: #FF5733; /* 赤色 */
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border: none;
     border-radius: 5px;
-    cursor: pointer;
+    text-decoration: none;
 }
 
-.choice:hover {
-    background-color: #FF4500;
+.logout-button:hover {
+    background-color: #C70039;
 }
 
-/* 解説ボックスのスタイル */
-#explanation-section {
-    word-wrap: break-word; /* 長い単語を折り返す */
-    white-space: pre-wrap; /* 改行を維持しつつ折り返し */
-    overflow-wrap: break-word; /* 長い単語を自動的に折り返す */
-    max-width: 90%; /* 解説ボックスの横幅を制限 */
-    margin: auto; /* ボックスを中央揃え */
+/* コンテナ */
+.container {
+    max-width: 1200px;
+    margin: auto;
     padding: 20px;
+}
+
+/* グリッドレイアウト */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* 情報ボックス */
+.info-box {
+    background-color: #4CAF50; /* 緑色 */
+    border: 5px solid #6B4226; /* 茶色 */
     border-radius: 10px;
-    background-color: #4caf50; /* 緑の背景色 */
-    color: white; /* テキスト色 */
+    padding: 20px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 1.2rem;
+}
+
+.info-box h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.info-box p {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+/* グラフセクション */
+.chart-box {
+    background-color: #4CAF50;
+    border: 5px solid #6B4226;
+    border-radius: 10px;
+    padding: 20px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 1.2rem;
+}
+
+.chart-box h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
 }
