@@ -94,16 +94,22 @@
         <h1>計算アプリ - 結果</h1>
 
         <!-- スコア表示 -->
-        <div class="chalkboard">
-            <h3>スコア</h3>
-            <p class="score-display">{{ score }} / {{ total_score }} 点</p>
-            <div class="progress-bar">
-                <div class="progress-bar-inner" style="width: {{ score_percent|floatformat:0 }}%;">
-                    {{ score_percent|floatformat:0 }}%
-                </div>
-            </div>
-            <p>Debug: Score Percent = {{ score_percent }}</p>
+    <div class="chalkboard">
+        <h3>スコア</h3>
+        <p class="score-display">{{ score }} / {{ total_score }} 点</p>
+    
+        <!-- プログレスバー -->
+    <div class="progress-bar">
+        <!-- プログレスバー内のスタイルにエラーが発生しないよう修正 -->
+        <div 
+            class="progress-bar-inner" 
+            style="width: {{ score_percent|default:0|floatformat:0 }}%;" 
+            aria-valuenow="{{ score_percent|default:0|floatformat:0 }}" 
+            aria-valuemin="0" 
+            aria-valuemax="100">
+            {{ score_percent|default:0|floatformat:0 }}%
         </div>
+    </div>
 
         <!-- 間違えた問題と解説 -->
         {% if wrong_questions %}

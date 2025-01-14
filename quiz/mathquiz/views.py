@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect  # 修正: 正しいインポート
 from .models import Question
 import random
 from django.http import JsonResponse
@@ -18,44 +18,36 @@ def home(request):
 # 問題表示ビュー
 def quiz_view(request):
     if request.method == 'GET':
-        # データベースから全ての問題を取得し、関連する不正解肢も一緒に取得
         questions = list(Question.objects.prefetch_related('incorrect_choices').all())
 
-        # 出題する問題数を指定（例: 10問）
+        # 出題する問題数
         num_questions = 10
         selected_questions = random.sample(questions, min(num_questions, len(questions)))
 
-        # 4肢択一形式の選択肢を構築
+        # 4肢択一形式の選択肢
         questions_with_choices = []
         for question in selected_questions:
-            # 不正解の選択肢を取得
             incorrect_choices = [choice.text for choice in question.incorrect_choices.all()]
-            # 正解を追加
             all_choices = incorrect_choices + [question.correct_answer]
 
-            # **選択肢が4つ未満の場合に警告を出力**
             if len(all_choices) < 4:
                 print(f"問題ID {question.id} の選択肢が不足しています: {all_choices}")
 
-            # 選択肢をランダムに並び替え
             random.shuffle(all_choices)
 
-            # 問題データを構築
             questions_with_choices.append({
-                'id': question.id,  # 問題のID
-                'text': question.text,  # 問題文
-                'choices': all_choices,  # ランダムに並び替えた選択肢
-                'correct_answer': question.correct_answer,  # 正解
-                'category': question.category.name if question.category else '',  # 単元名（任意）
-                'explanation': question.explanation or ''  # 解説（任意）
+                'id': question.id,
+                'text': question.text,
+                'choices': all_choices,
+                'correct_answer': question.correct_answer,
+                'category': question.category.name if question.category else '',
+                'explanation': question.explanation or ''
             })
 
-        # JSON形式で問題データを渡す
         return render(request, 'mathquiz/quiz.html', {
-            'questions': json.dumps(questions_with_choices, ensure_ascii=False)  # 日本語対応
+            'questions': json.dumps(questions_with_choices, ensure_ascii=False)
         })
 
-    # GET以外のリクエストはリダイレクト
     return redirect('quiz')
 
 # 解答処理ビュー
