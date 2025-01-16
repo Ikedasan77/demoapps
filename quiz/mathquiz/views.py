@@ -1,7 +1,6 @@
-from django.shortcuts import render, redirect  # 修正: 正しいインポート
+from django.shortcuts import render, redirect
 from .models import Question
 import random
-from django.http import JsonResponse
 import json  # JSONモジュールのインポート
 
 # 回答の正規化
@@ -105,14 +104,34 @@ def result_view(request):
     total_score = len(questions) * 10
     score_percent = (score / total_score) * 100 if total_score > 0 else 0
 
+    # メッセージのリストを定義
     if score_percent == 100:
-        advice = "素晴らしい！完全に理解しています！"
+        advice_list = [
+            "素晴らしい！完全に理解しています！",
+            "満点おめでとうございます！これからもこの調子で頑張ってください！",
+            "すごい！全問正解です！次のチャレンジも期待しています！"
+        ]
     elif score_percent >= 80:
-        advice = "よくできました！あと少しで満点です。"
+        advice_list = [
+            "よくできました！あと少しで満点です。",
+            "素晴らしい成果です！次回は満点を目指しましょう。",
+            "とても良い結果です！引き続き頑張りましょう！"
+        ]
     elif score_percent >= 50:
-        advice = "頑張りました！もう少し復習するとさらに良くなります。"
+        advice_list = [
+            "頑張りました！もう少し復習するとさらに良くなります。",
+            "良いスタートです！間違えた問題を復習して次回に備えましょう。",
+            "半分以上正解しました！次はもっと良い結果を目指しましょう！"
+        ]
     else:
-        advice = "復習が必要です。間違えた問題を確認しましょう。"
+        advice_list = [
+            "復習が必要です。間違えた問題を確認しましょう。",
+            "少し難しい問題でしたね。復習してもう一度挑戦しましょう！",
+            "結果に落ち込まず、復習を重ねて次回頑張りましょう！"
+        ]
+
+    # ランダムに励ましメッセージを選択
+    advice = random.choice(advice_list)
 
     return render(request, 'mathquiz/result.html', {
         'score': score,

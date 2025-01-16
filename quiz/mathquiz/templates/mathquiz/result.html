@@ -21,7 +21,6 @@
         .result-container {
             background-color: #ffffff;
             padding: 20px;
-            border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             max-width: 800px;
             margin: 20px auto;
@@ -93,23 +92,29 @@
     <div class="result-container">
         <h1>計算アプリ - 結果</h1>
 
-        <!-- スコア表示 -->
-    <div class="chalkboard">
-        <h3>スコア</h3>
-        <p class="score-display">{{ score }} / {{ total_score }} 点</p>
-    
-        <!-- プログレスバー -->
-    <div class="progress-bar">
-        <!-- プログレスバー内のスタイルにエラーが発生しないよう修正 -->
-        <div 
-            class="progress-bar-inner" 
-            style="width: {{ score_percent|default:0|floatformat:0 }}%;"
-            aria-valuenow="{{ score_percent|default:0|floatformat:0 }}" 
-            aria-valuemin="0" 
-            aria-valuemax="100">
-            {{ score_percent|default:0|floatformat:0 }}%
+        <!-- 正解数表示 -->
+        <div class="chalkboard">
+            <h3>正解数</h3>
+            <p>{{ correct_answers }} / {{ total_questions }} 問正解</p>
         </div>
-    </div>
+
+        <!-- スコア表示 -->
+        <div class="chalkboard">
+            <h3>スコア</h3>
+            <p class="score-display">{{ score }} / {{ total_score }} 点</p>
+        
+            <!-- プログレスバー -->
+            <div class="progress-bar">
+                <div 
+                    class="progress-bar-inner" 
+                    style="width: {{ score_percent|default:0|floatformat:0 }}%;" 
+                    aria-valuenow="{{ score_percent|default:0|floatformat:0 }}" 
+                    aria-valuemin="0" 
+                    aria-valuemax="100">
+                    {{ score_percent|default:0|floatformat:0 }}%
+                </div>
+            </div>
+        </div>
 
         <!-- 間違えた問題と解説 -->
         {% if wrong_questions %}
@@ -127,7 +132,6 @@
                 {% endfor %}
             </ul>
         </div>
-
         {% endif %}
 
         <!-- 総評 -->
