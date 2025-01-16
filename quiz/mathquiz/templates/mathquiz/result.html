@@ -103,7 +103,7 @@
         <!-- プログレスバー内のスタイルにエラーが発生しないよう修正 -->
         <div 
             class="progress-bar-inner" 
-            style="width: {{ score_percent|default:0|floatformat:0 }}%;" 
+            style="width: {{ score_percent|default:0|floatformat:0 }}%;"
             aria-valuenow="{{ score_percent|default:0|floatformat:0 }}" 
             aria-valuemin="0" 
             aria-valuemax="100">
