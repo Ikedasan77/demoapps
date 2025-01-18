@@ -55,6 +55,7 @@ def submit_quiz_view(request):
         score = 0
         wrong_questions = []
         questions = []
+        print(request.POST)  # POSTデータを出力
 
         for i in range(10):
             user_answer = request.POST.get(f'answer_{i}')
@@ -88,6 +89,10 @@ def result_view(request):
     score = request.session.get('score', 0)
     wrong_question_ids = request.session.get('wrong_questions', [])
     questions_ids = request.session.get('questions', [])
+
+    print(f"Score: {score}")
+    print(f"Wrong Question IDs: {wrong_question_ids}")
+    print(f"Question IDs: {questions_ids}")
 
     questions = Question.objects.filter(id__in=questions_ids)
     wrong_questions = Question.objects.filter(id__in=wrong_question_ids)
@@ -141,3 +146,15 @@ def result_view(request):
         'questions': questions,
         'advice': advice
     })
+
+    print({
+    'score': score,
+    'total_score': total_score,
+    'score_percent': score_percent,
+    'wrong_questions': wrong_questions_data,
+    'questions': questions,
+    'advice': advice
+})
+
+
+
