@@ -100,8 +100,8 @@ def result_view(request):
     wrong_questions_data = [
         {
             'text': question.text,
-            'explanation': question.explanation or '解説はありません。',
-            'correct_answer': question.correct_answer
+            'category': question.category.name if question.category else '不明なカテゴリ',
+            'explanation': question.explanation or '解説はありません。'
         }
         for question in wrong_questions
     ]
@@ -109,52 +109,30 @@ def result_view(request):
     total_score = len(questions) * 10
     score_percent = (score / total_score) * 100 if total_score > 0 else 0
 
-    # メッセージのリストを定義
-    if score_percent == 100:
-        advice_list = [
-            "素晴らしい！完全に理解しています！",
-            "満点おめでとうございます！これからもこの調子で頑張ってください！",
-            "すごい！全問正解です！次のチャレンジも期待しています！"
-        ]
-    elif score_percent >= 80:
-        advice_list = [
-            "よくできました！あと少しで満点です。",
-            "素晴らしい成果です！次回は満点を目指しましょう。",
-            "とても良い結果です！引き続き頑張りましょう！"
-        ]
-    elif score_percent >= 50:
-        advice_list = [
-            "頑張りました！もう少し復習するとさらに良くなります。",
-            "良いスタートです！間違えた問題を復習して次回に備えましょう。",
-            "半分以上正解しました！次はもっと良い結果を目指しましょう！"
-        ]
-    else:
-        advice_list = [
-            "復習が必要です。間違えた問題を確認しましょう。",
-            "少し難しい問題でしたね。復習してもう一度挑戦しましょう！",
-            "結果に落ち込まず、復習を重ねて次回頑張りましょう！"
-        ]
+    # 励ましメッセージを設定
+    encouragement_messages = {
+        'high': "素晴らしい！次回もこの調子で頑張りましょう！",
+        'medium': "よく頑張りました！復習してさらに高得点を目指しましょう！",
+        'low': "少し難しい問題でしたね。復習をしてもう一度挑戦しましょう！"
+    }
 
-    # ランダムに励ましメッセージを選択
-    advice = random.choice(advice_list)
+    if score_percent >= 80:
+        encouragement_message = encouragement_messages['high']
+    elif score_percent >= 50:
+        encouragement_message = encouragement_messages['medium']
+    else:
+        encouragement_message = encouragement_messages['low']
+
+    # 次の学習トピックを設定
+    next_topic = "二次方程式の解法"  # 実際のロジックではデータベースから選択可能
 
     return render(request, 'mathquiz/result.html', {
         'score': score,
         'total_score': total_score,
         'score_percent': score_percent,
+        'correct_answers': score,
+        'total_questions': len(questions),
         'wrong_questions': wrong_questions_data,
-        'questions': questions,
-        'advice': advice
+        'encouragement_message': encouragement_message,
+        'next_topic': next_topic
     })
-
-    print({
-    'score': score,
-    'total_score': total_score,
-    'score_percent': score_percent,
-    'wrong_questions': wrong_questions_data,
-    'questions': questions,
-    'advice': advice
-})
-
-
-
