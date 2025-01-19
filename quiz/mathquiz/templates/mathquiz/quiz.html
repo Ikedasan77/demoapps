@@ -80,11 +80,14 @@
             color: #FFFFFF; /* 白いテキスト */
             padding: 20px;
             border-radius: 10px;
-            margin: 20px auto;
+            margin: 10px auto; /* 上部の余白を調整 */
             max-width: 800px;
+            font-size: 1.5rem; /* フォントサイズを大きく */
+            line-height: 1.8; /* 行間を広げて読みやすく */
             word-wrap: break-word; /* 長い単語を折り返す */
-            white-space: pre-wrap; /* 改行を維持しつつ折り返し */
-            overflow-wrap: break-word; /* 長い単語を自動的に折り返す */
+            white-space: normal; /* 自動的に改行を入れる */
+            overflow-wrap: anywhere; /* 解説内の長い単語をどこでも折り返す */
+            text-align: left; /* テキストを左揃え */
         }
 
         /* 次の問題ボタン */
