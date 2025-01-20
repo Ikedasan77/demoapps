@@ -76,18 +76,18 @@
 
         /* 解説部分のデザイン */
         #explanation-section {
-            background-color: #4CAF50; /* 緑色の背景 */
-            color: #FFFFFF; /* 白いテキスト */
-            padding: 20px;
-            border-radius: 10px;
-            margin: 10px auto; /* 上部の余白を調整 */
-            max-width: 800px;
-            font-size: 1.5rem; /* フォントサイズを大きく */
-            line-height: 1.8; /* 行間を広げて読みやすく */
-            word-wrap: break-word; /* 長い単語を折り返す */
-            white-space: normal; /* 自動的に改行を入れる */
-            overflow-wrap: anywhere; /* 解説内の長い単語をどこでも折り返す */
-            text-align: left; /* テキストを左揃え */
+            background-color: #4CAF50 !important; /* 緑色の背景 */
+            color: #FFFFFF !important; /* 白いテキスト */
+            padding: 20px !important;
+            border-radius: 10px !important;
+            margin: 10px auto !important; /* 上部の余白を調整 */
+            max-width: 800px !important;
+            font-size: 1.5rem !important; /* フォントサイズを大きく */
+            line-height: 1.8 !important; /* 行間を広げて読みやすく */
+            word-wrap: break-word !important; /* 長い単語を折り返す */
+            white-space: normal !important; /* 自動的に改行を入れる */
+            overflow-wrap: anywhere !important; /* 長い単語をどこでも折り返す */
+            text-align: left !important; /* テキストを左揃え */
         }
 
         /* 次の問題ボタン */
@@ -123,7 +123,7 @@
             <div id="explanation-section" class="question-container" style="display: none;">
                 <p id="result-message" class="text-lg font-bold"></p>
                 <p id="explanation-text" class="question-text"></p>
-                <button onclick="goToNextQuestion()">次の問題へ</button>
+                <center><button onclick="goToNextQuestion()">次の問題へ</button></center>
             </div>
         </div>
     </div>
