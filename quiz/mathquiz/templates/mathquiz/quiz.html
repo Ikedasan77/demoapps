@@ -4,7 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>計算アプリ</title>
-    
+
+    <!-- MathJaxの設定 -->
+    <script type="text/javascript">
+        MathJax = {
+          tex: {
+            inlineMath: [['\\(', '\\)']],
+            displayMath: [['\\[', '\\]']],
+            processEscapes: true,
+            tags: 'none'  // 自動折り返し設定を削除
+          },
+          options: {
+            renderActions: {
+              find_script: [10, function (doc) {
+                for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                  const display = !!node.type.match(/; *mode=display/);
+                  const math = doc.convert(node.textContent, {display});
+                  node.replaceWith(math);
+                }
+              }, '']
+            }
+          }
+        };
+    </script>
+
     <!-- MathJaxライブラリ -->
     <script
         type="text/javascript"

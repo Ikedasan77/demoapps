@@ -44,7 +44,7 @@ def quiz_view(request):
             })
 
         return render(request, 'mathquiz/quiz.html', {
-            'questions': json.dumps(questions_with_choices, ensure_ascii=False)
+            'questions': json.dumps(questions_with_choices, ensure_ascii=False).replace("\\n", "<br>")
         })
 
     return redirect('quiz')
