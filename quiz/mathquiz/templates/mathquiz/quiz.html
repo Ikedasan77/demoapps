@@ -5,14 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>計算アプリ</title>
 
-    <!-- MathJaxの設定 -->
+        <!-- MathJaxの設定 -->
     <script type="text/javascript">
         MathJax = {
           tex: {
             inlineMath: [['\\(', '\\)']],
             displayMath: [['\\[', '\\]']],
             processEscapes: true,
-            tags: 'none'  // 自動折り返し設定を削除
+            tags: 'none'
+          },
+          svg: {
+            fontCache: 'global',
+            displayAlign: 'center',
+            linebreaks: { automatic: true, width: 'container' }  // 自動折り返しを有効化
           },
           options: {
             renderActions: {
@@ -21,10 +26,10 @@
                   const display = !!node.type.match(/; *mode=display/);
                   const math = doc.convert(node.textContent, {display});
                   node.replaceWith(math);
-                }
-              }, '']
             }
-          }
+          }, '']
+        }
+      }
         };
     </script>
 
