@@ -93,6 +93,13 @@
         .link-primary:hover {
             color: #005F7A;
         }
+
+        /* エラーメッセージのスタイル */
+        .error-message {
+            color: red;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -101,7 +108,18 @@
         <!-- ログインフォーム全体を中央揃え -->
         <div class="quiz-container">
             <h2 class="text-center text-lg font-bold mb-4">ログイン</h2>
-            <form action="/login/" method="post">
+
+            <!-- 🔴【追加】Djangoのエラーメッセージを表示 -->
+            {% if messages %}
+                <ul class="error-message">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <!-- 🔴【変更】`action="/login/"` → `action="{% url 'login' %}"` -->
+            <form action="{% url 'login' %}" method="post">
                 {% csrf_token %}
                 <div class="form-group">
                     <label class="form-label" for="username">ユーザーID</label>
@@ -113,8 +131,10 @@
                 </div>
                 <button class="btn-primary" type="submit">ログイン</button>
             </form>
+
+            <!-- 🔴【変更】`<a href="/register/">` → `<a href="{% url 'register' %}">` -->
             <p class="text-center mt-4">
-                アカウントをお持ちでないですか？ <a href="/register/" class="link-primary">新規登録</a>
+                アカウントをお持ちでないですか？ <a href="{% url 'register' %}" class="link-primary">新規登録</a>
             </p>
         </div>
     </div>
