@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>計算アプリ</title>
 
-        <!-- MathJaxの設定 -->
+    <!-- MathJaxの設定 -->
     <script type="text/javascript">
         MathJax = {
           tex: {
@@ -26,10 +26,10 @@
                   const display = !!node.type.match(/; *mode=display/);
                   const math = doc.convert(node.textContent, {display});
                   node.replaceWith(math);
+                }
+              }, '']
             }
-          }, '']
-        }
-      }
+          }
         };
     </script>
 
@@ -133,6 +133,12 @@
             background-color: #005F7A; /* 濃い青色 */
         }
     </style>
+    
+    <!-- JSONデータをJavaScriptに渡す -->
+    <script>
+        const questions = JSON.parse(`{{ questions_json|escapejs }}`);
+    </script>
+
 </head>
 <body>
     <!-- 白い背景で全体をラップ -->
@@ -158,7 +164,6 @@
 
     <!-- JavaScript -->
     <script>
-        const questions = JSON.parse(`{{ questions|safe|escapejs }}`);
         let currentQuestionIndex = 0;
 
         // 問題を読み込む関数
