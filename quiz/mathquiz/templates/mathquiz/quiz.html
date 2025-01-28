@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>計算アプリ</title>
 
-        <!-- MathJaxの設定 -->
+    <!-- MathJaxの設定 -->
     <script type="text/javascript">
         MathJax = {
           tex: {
@@ -18,18 +18,7 @@
             fontCache: 'global',
             displayAlign: 'center',
             linebreaks: { automatic: true, width: 'container' }  // 自動折り返しを有効化
-          },
-          options: {
-            renderActions: {
-              find_script: [10, function (doc) {
-                for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
-                  const display = !!node.type.match(/; *mode=display/);
-                  const math = doc.convert(node.textContent, {display});
-                  node.replaceWith(math);
-            }
-          }, '']
-        }
-      }
+          }
         };
     </script>
 
@@ -41,38 +30,35 @@
     </script>
 
     <style>
-        /* 全体の背景色とフォント設定 */
+        /* 全体のデザイン */
         body {
-            background-color: #00AAEF; /* 水色の背景 */
+            background-color: #00AAEF;
             font-family: Arial, sans-serif;
-            color: #FFFFFF; /* 白いテキスト */
+            color: #FFFFFF;
             margin: 0;
             padding: 0;
         }
 
-        /* 白い背景を作成 */
         .white-background {
-            background-color: #FFFFFF; /* 白い背景 */
+            background-color: #FFFFFF;
             padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* 軽い影を追加 */
-            margin: 30px auto; /* 上下の余白を追加 */
-            max-width: 900px; /* 最大幅を設定 */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            margin: 30px auto;
+            max-width: 900px;
         }
 
-        /* 全体の中央揃えとスタイリング */
         .quiz-container {
-            background-color: #4CAF50; /* 緑の背景 */
-            border: 5px solid #6b4226; /* 木枠風の濃い茶色 */
+            background-color: #4CAF50;
+            border: 5px solid #6b4226;
             padding: 20px;
-            margin: 0 auto; /* 外側のマージンは白背景で調整 */
+            margin: 0 auto;
             max-width: 800px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 軽い影をつける */
-            color: #FFFFFF; /* 白いテキスト */
-            text-align: center; /* 中央揃え */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #FFFFFF;
+            text-align: center;
         }
 
-        /* 問題番号やテキスト */
         .question-number {
             font-size: 1.5rem;
             font-weight: bold;
@@ -83,45 +69,39 @@
             margin: 20px 0;
         }
 
-        /* 選択肢ボタンのデザイン */
         .choice {
-            background-color: #8B0000; /* 赤色 */
-            color: #FFFFFF; /* 白文字 */
+            background-color: #8B0000;
+            color: #FFFFFF;
             padding: 15px;
             margin: 10px 0;
             border-radius: 5px;
             cursor: pointer;
             font-size: 1.2rem;
             border: none;
-            display: block; /* ブロック要素にして幅を最大化 */
-            width: 80%; /* 幅を調整 */
-            margin: 10px auto; /* 中央揃え */
+            display: block;
+            width: 80%;
+            margin: 10px auto;
         }
 
         .choice:hover {
-            background-color: #FF4500; /* オレンジ色 */
+            background-color: #FF4500;
         }
 
-        /* 解説部分のデザイン */
         #explanation-section {
-            background-color: #4CAF50 !important; /* 緑色の背景 */
-            color: #FFFFFF !important; /* 白いテキスト */
-            padding: 20px !important;
-            border-radius: 10px !important;
-            margin: 10px auto !important; /* 上部の余白を調整 */
-            max-width: 800px !important;
-            font-size: 1.5rem !important; /* フォントサイズを大きく */
-            line-height: 1.8 !important; /* 行間を広げて読みやすく */
-            word-wrap: break-word !important; /* 長い単語を折り返す */
-            white-space: normal !important; /* 自動的に改行を入れる */
-            overflow-wrap: anywhere !important; /* 長い単語をどこでも折り返す */
-            text-align: left !important; /* テキストを左揃え */
+            background-color: #4CAF50;
+            color: #FFFFFF;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px auto;
+            max-width: 800px;
+            font-size: 1.5rem;
+            line-height: 1.8;
+            text-align: left;
         }
 
-        /* 次の問題ボタン */
         button {
-            background-color: #008CBA; /* 青色 */
-            color: #FFFFFF; /* 白文字 */
+            background-color: #008CBA;
+            color: #FFFFFF;
             border: none;
             padding: 10px 20px;
             font-size: 1.2rem;
@@ -130,27 +110,29 @@
         }
 
         button:hover {
-            background-color: #005F7A; /* 濃い青色 */
+            background-color: #005F7A;
         }
     </style>
+
+    <!-- JSONデータをJavaScriptに渡す -->
+    <script>
+        const questions = JSON.parse(`{{ questions_json|escapejs }}`);
+        console.log("Questionsデータ:", questions);  // JSONデータの確認
+    </script>
+
 </head>
 <body>
-    <!-- 白い背景で全体をラップ -->
     <div class="white-background">
         <div class="quiz-container">
-            <!-- 問題部分 -->
-            <div id="question-section" class="question-container">
+            <div id="question-section">
                 <span id="question-number" class="question-number">1</span>
                 <p id="question-text"></p>
-                <div id="choices" class="choices">
-                    <!-- 選択肢がここに挿入されます -->
-                </div>
+                <div id="choices"></div>
             </div>
 
-            <!-- 解説部分 -->
-            <div id="explanation-section" class="question-container" style="display: none;">
-                <p id="result-message" class="text-lg font-bold"></p>
-                <p id="explanation-text" class="question-text"></p>
+            <div id="explanation-section" style="display: none;">
+                <p id="result-message"></p>
+                <p id="explanation-text"></p>
                 <center><button onclick="goToNextQuestion()">次の問題へ</button></center>
             </div>
         </div>
@@ -158,55 +140,71 @@
 
     <!-- JavaScript -->
     <script>
-        const questions = JSON.parse(`{{ questions|safe|escapejs }}`);
         let currentQuestionIndex = 0;
 
-        // 問題を読み込む関数
         function loadQuestion() {
+            if (!questions || questions.length === 0) {
+                console.error("クイズデータが空です！");
+                return;
+            }
+
             const question = questions[currentQuestionIndex];
+
+            console.log(`現在の問題番号: ${currentQuestionIndex}`);
+            console.log("表示する問題:", question);
+
             document.getElementById('question-number').textContent = currentQuestionIndex + 1;
             document.getElementById('question-text').innerHTML = `\\( ${question.text} \\)`;
+
             const choicesContainer = document.getElementById('choices');
             choicesContainer.innerHTML = '';
+
             question.choices.forEach(choice => {
                 const div = document.createElement('div');
                 div.className = 'choice';
                 div.innerHTML = `\\( ${choice} \\)`;
-                div.onclick = () => submitAnswer(choice, question.correct_answer);
+                div.onclick = () => {
+                    console.log(`選択肢がクリックされました: ${choice}`);
+                    submitAnswer(choice, question.correct_answer);
+                };
                 choicesContainer.appendChild(div);
             });
-            MathJax.typesetPromise(); // MathJaxをレンダリング
+
+            MathJax.typesetPromise();
         }
 
-        // 回答を処理する関数
         function submitAnswer(selected, correct) {
+            console.log(`選択された回答: ${selected}, 正解: ${correct}`);
             const result = selected === correct ? "正解です！" : "不正解です。";
-            document.getElementById('result-message').textContent = result;
 
+            document.getElementById('result-message').textContent = result;
             const explanation = questions[currentQuestionIndex].explanation || "解説はありません。";
             document.getElementById('explanation-text').innerHTML = `\\( ${explanation} \\)`;
 
             document.getElementById('question-section').style.display = 'none';
             document.getElementById('explanation-section').style.display = 'block';
 
-            // MathJaxを再レンダリング
             MathJax.typesetPromise();
         }
 
-        // 次の問題に進む処理
         function goToNextQuestion() {
+            console.log("次の問題に進むボタンが押されました");
+
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
                 document.getElementById('question-section').style.display = 'block';
                 document.getElementById('explanation-section').style.display = 'none';
                 loadQuestion();
             } else {
+                console.log("全ての問題が終了。結果画面に移動します。");
                 window.location.href = '/results/';
             }
         }
 
-        // ページが読み込まれたら最初の問題を表示
-        document.addEventListener('DOMContentLoaded', loadQuestion);
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("ページが読み込まれました");
+            loadQuestion();
+        });
     </script>
 </body>
 </html>

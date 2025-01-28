@@ -141,3 +141,12 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # collectstaticコマンドで収集さ�
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # デフォルト
+
+# セッションの有効期限設定（30分）
+SESSION_COOKIE_AGE = 1800  
+
+# ブラウザを閉じてもセッションが維持されるようにする
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  
+
+# セッションの保存を強制
+SESSION_SAVE_EVERY_REQUEST = True  

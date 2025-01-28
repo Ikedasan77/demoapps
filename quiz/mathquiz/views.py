@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from .models import Question
 import random
-import json  # JSONモジュールのインポート
+import json
+from django.utils.html import escape  # HTMLエスケープ用
 
 # 回答の正規化
 def normalize_answer(answer):
@@ -26,8 +27,8 @@ def quiz_view(request):
         # 4肢択一形式の選択肢
         questions_with_choices = []
         for question in selected_questions:
-            incorrect_choices = [choice.text for choice in question.incorrect_choices.all()]
-            all_choices = incorrect_choices + [question.correct_answer]
+            incorrect_choices = [escape(choice.text) for choice in question.incorrect_choices.all()]
+            all_choices = incorrect_choices + [escape(question.correct_answer)]
 
             if len(all_choices) < 4:
                 print(f"問題ID {question.id} の選択肢が不足しています: {all_choices}")
@@ -36,15 +37,18 @@ def quiz_view(request):
 
             questions_with_choices.append({
                 'id': question.id,
-                'text': question.text,
+                'text': escape(question.text),  # 問題文をエスケープ
                 'choices': all_choices,
-                'correct_answer': question.correct_answer,
-                'category': question.category.name if question.category else '',
-                'explanation': question.explanation or ''
+                'correct_answer': escape(question.correct_answer),  # 正解もエスケープ
+                'category': escape(question.category.name) if question.category else '',
+                'explanation': escape(question.explanation or '')
             })
 
+        # JSONにエンコードし、ビュー内でサニタイズ済みデータを渡す
+        safe_questions_json = json.dumps(questions_with_choices, ensure_ascii=False)
+
         return render(request, 'mathquiz/quiz.html', {
-            'questions': json.dumps(questions_with_choices, ensure_ascii=False).replace("\\n", "<br>")
+            'questions_json': safe_questions_json  # エスケープされたJSONデータ
         })
 
     return redirect('quiz')
@@ -55,7 +59,8 @@ def submit_quiz_view(request):
         score = 0
         wrong_questions = []
         questions = []
-        print(request.POST)  # POSTデータを出力
+
+        print("POSTデータ:", request.POST)  # デバッグ用
 
         for i in range(10):
             user_answer = request.POST.get(f'answer_{i}')
@@ -86,6 +91,7 @@ def submit_quiz_view(request):
 
 # 結果表示ビュー
 def result_view(request):
+    print("取得したセッションデータ:", request.session.items())  # デバッグ追加
     score = request.session.get('score', 0)
     wrong_question_ids = request.session.get('wrong_questions', [])
     questions_ids = request.session.get('questions', [])
@@ -99,9 +105,9 @@ def result_view(request):
 
     wrong_questions_data = [
         {
-            'text': question.text,
-            'category': question.category.name if question.category else '不明なカテゴリ',
-            'explanation': question.explanation or '解説はありません。'
+            'text': escape(question.text),
+            'category': escape(question.category.name) if question.category else '不明なカテゴリ',
+            'explanation': escape(question.explanation or '解説はありません。')
         }
         for question in wrong_questions
     ]
