@@ -18,12 +18,19 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from mathquiz import views  # 修正済み: mathquiz/views.py をインポート
+from mathquiz import views  # mathquiz/views.py をインポート
 
-# プロジェクト全体のURLパターンを定義
+# 🔴【追加】ログイン・新規登録・ログアウトのURLを追加
 urlpatterns = [
     path('admin/', admin.site.urls),  # 管理サイト
     path('', views.home, name='home'),  # ホームページ
+
+    # 🔴【追加】ログイン・新規登録・ログアウト
+    path('login/', views.login_view, name='login'),  # ログインページ
+    path('register/', views.register_view, name='register'),  # 新規登録ページ
+    path('logout/', views.logout_view, name='logout'),  # ログアウト処理
+
+    # クイズ関連のURL
     path('quiz/', views.quiz_view, name='quiz'),  # クイズページ
     path('quiz/submit/', views.submit_quiz_view, name='submit_quiz'),  # クイズ送信
     path('results/', views.result_view, name='results'),  # 結果ページ
