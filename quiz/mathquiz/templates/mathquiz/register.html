@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -16,7 +17,7 @@
         .white-background {
             background-color: #FFFFFF; /* 白い背景 */
             padding: 20px;
-            border-radius: 15px;
+            border-radius: 15px; /* 角を丸くする */
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* 軽い影を追加 */
             max-width: 500px; /* 最大幅 */
             margin: 30px auto; /* 上下左右中央寄せ */
@@ -78,12 +79,30 @@
         a:hover {
             color: #005F7A;
         }
+
+        /* 🔴【追加】エラーメッセージのスタイル */
+        .error-message {
+            color: red;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
     <div class="white-background">
         <h2>新規登録</h2>
-        <form action="/register/" method="post">
+
+        <!-- 🔴【追加】Djangoのエラーメッセージを表示 -->
+        {% if messages %}
+            <ul class="error-message">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <!-- 🔴【変更】`action="/register/"` → `action="{% url 'register' %}"` -->
+        <form action="{% url 'register' %}" method="post">
             {% csrf_token %}
             <label for="email">メールアドレス</label>
             <input type="email" name="email" id="email" required>
@@ -96,8 +115,10 @@
 
             <button type="submit">登録</button>
         </form>
+
+        <!-- 🔴【変更】`<a href="/login/">` → `<a href="{% url 'login' %}">` -->
         <p class="text-center">
-            既にアカウントをお持ちですか？ <a href="/login/">ログイン</a>
+            既にアカウントをお持ちですか？ <a href="{% url 'login' %}">ログイン</a>
         </p>
     </div>
 </body>

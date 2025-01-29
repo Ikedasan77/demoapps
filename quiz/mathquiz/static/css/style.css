@@ -1,0 +1,88 @@
+/* 全体の背景色 */
+body {
+    background-color: #dff5f2; /* 水色の背景 */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* ヘッダーのスタイル */
+.header {
+    background-color: #4CAF50; /* 緑色 */
+    color: #FFFFFF;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard-title {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.logout-button {
+    background-color: #FF5733; /* 赤色 */
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.logout-button:hover {
+    background-color: #C70039;
+}
+
+/* コンテナ */
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* グリッドレイアウト */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* 情報ボックス */
+.info-box {
+    background-color: #4CAF50; /* 緑色 */
+    border: 5px solid #6B4226; /* 茶色 */
+    border-radius: 10px;
+    padding: 20px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 1.2rem;
+}
+
+.info-box h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.info-box p {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+/* グラフセクション */
+.chart-box {
+    background-color: #4CAF50;
+    border: 5px solid #6B4226;
+    border-radius: 10px;
+    padding: 20px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 1.2rem;
+}
+
+.chart-box h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
