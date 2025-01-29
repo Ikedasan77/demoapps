@@ -26,6 +26,10 @@ SECRET_KEY = 'django-insecure-#y#(_(jarr_f23gu6=43%-b8f&-gtd@b91r00e2q9_0^q+et3v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# 静的ファイルの詳細ログを有効にする
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 ALLOWED_HOSTS = []
 
 
@@ -43,10 +47,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',  # ここに追加
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -135,3 +139,14 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # collectstaticコマンドで収集さ�
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # デフォルト
+
+# セッションの有効期限設定（30分）
+SESSION_COOKIE_AGE = 1800  
+
+# ブラウザを閉じてもセッションが維持されるようにする
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  
+
+# セッションの保存を強制
+SESSION_SAVE_EVERY_REQUEST = True  

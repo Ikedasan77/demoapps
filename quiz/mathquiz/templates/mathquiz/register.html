@@ -1,35 +1,125 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新規ユーザー登録</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <style>
+        /* 背景全体の設定 */
+        body {
+            background-color: #00AAEF; /* 青い背景 */
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* 白い背景部分 */
+        .white-background {
+            background-color: #FFFFFF; /* 白い背景 */
+            padding: 20px;
+            border-radius: 15px; /* 角を丸くする */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* 軽い影を追加 */
+            max-width: 500px; /* 最大幅 */
+            margin: 30px auto; /* 上下左右中央寄せ */
+        }
+
+        /* ヘッダーのデザイン */
+        h2 {
+            color: #4CAF50; /* 緑色 */
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        /* フォームのスタイル */
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        input[type="email"],
+        input[type="text"],
+        input[type="password"] {
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #CCCCCC;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background-color: #008CBA; /* 青色 */
+            color: white;
+            padding: 10px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #005F7A; /* 濃い青 */
+        }
+
+        .text-center {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        a {
+            color: #008CBA;
+            text-decoration: underline;
+        }
+
+        a:hover {
+            color: #005F7A;
+        }
+
+        /* 🔴【追加】エラーメッセージのスタイル */
+        .error-message {
+            color: red;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-    <div class="flex items-center justify-center min-h-screen">
-        <div class="bg-white p-8 rounded shadow-lg w-full max-w-md">
-            <h2 class="text-2xl font-bold text-center mb-4">新規登録</h2>
-            <form action="/register/" method="post">
-                {% csrf_token %}
-                <div class="mb-4">
-                    <label for="email" class="block text-sm font-medium text-gray-700">メールアドレス</label>
-                    <input type="email" name="email" id="email" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2">
-                </div>
-                <div class="mb-4">
-                    <label for="username" class="block text-sm font-medium text-gray-700">ユーザーID</label>
-                    <input type="text" name="username" id="username" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2">
-                </div>
-                <div class="mb-6">
-                    <label for="password" class="block text-sm font-medium text-gray-700">パスワード</label>
-                    <input type="password" name="password" id="password" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2">
-                </div>
-                <button type="submit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">登録</button>
-            </form>
-            <p class="text-center mt-4">
-                既にアカウントをお持ちですか？ <a href="/login/" class="text-blue-500 underline">ログイン</a>
-            </p>
-        </div>
+<body>
+    <div class="white-background">
+        <h2>新規登録</h2>
+
+        <!-- 🔴【追加】Djangoのエラーメッセージを表示 -->
+        {% if messages %}
+            <ul class="error-message">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <!-- 🔴【変更】`action="/register/"` → `action="{% url 'register' %}"` -->
+        <form action="{% url 'register' %}" method="post">
+            {% csrf_token %}
+            <label for="email">メールアドレス</label>
+            <input type="email" name="email" id="email" required>
+
+            <label for="username">ユーザーID</label>
+            <input type="text" name="username" id="username" required>
+
+            <label for="password">パスワード</label>
+            <input type="password" name="password" id="password" required>
+
+            <button type="submit">登録</button>
+        </form>
+
+        <!-- 🔴【変更】`<a href="/login/">` → `<a href="{% url 'login' %}">` -->
+        <p class="text-center">
+            既にアカウントをお持ちですか？ <a href="{% url 'login' %}">ログイン</a>
+        </p>
     </div>
 </body>
 </html>
