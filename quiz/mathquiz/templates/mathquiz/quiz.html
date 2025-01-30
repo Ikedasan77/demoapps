@@ -17,7 +17,7 @@
           svg: {
             fontCache: 'global',
             displayAlign: 'center',
-            linebreaks: { automatic: true, width: 'container' }  // 自動折り返しを有効化
+            linebreaks: { automatic: true, width: 'container' }
           }
         };
     </script>
@@ -30,7 +30,6 @@
     </script>
 
     <style>
-        /* 全体のデザイン */
         body {
             background-color: #00AAEF;
             font-family: Arial, sans-serif;
@@ -57,16 +56,6 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             color: #FFFFFF;
             text-align: center;
-        }
-
-        .question-number {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        #question-text {
-            font-size: 1.2rem;
-            margin: 20px 0;
         }
 
         .choice {
@@ -97,6 +86,7 @@
             font-size: 1.5rem;
             line-height: 1.8;
             text-align: left;
+            display: none;
         }
 
         button {
@@ -114,33 +104,10 @@
         }
     </style>
 
-    <!-- JSONデータをJavaScriptに渡す -->
     <script>
         const questions = JSON.parse(`{{ questions_json|escapejs }}`);
-        console.log("Questionsデータ:", questions);  // JSONデータの確認
-    </script>
-
-</head>
-<body>
-    <div class="white-background">
-        <div class="quiz-container">
-            <div id="question-section">
-                <span id="question-number" class="question-number">1</span>
-                <p id="question-text"></p>
-                <div id="choices"></div>
-            </div>
-
-            <div id="explanation-section" style="display: none;">
-                <p id="result-message"></p>
-                <p id="explanation-text"></p>
-                <center><button onclick="goToNextQuestion()">次の問題へ</button></center>
-            </div>
-        </div>
-    </div>
-
-    <!-- JavaScript -->
-    <script>
         let currentQuestionIndex = 0;
+        let userAnswers = [];
 
         function loadQuestion() {
             if (!questions || questions.length === 0) {
@@ -149,9 +116,6 @@
             }
 
             const question = questions[currentQuestionIndex];
-
-            console.log(`現在の問題番号: ${currentQuestionIndex}`);
-            console.log("表示する問題:", question);
 
             document.getElementById('question-number').textContent = currentQuestionIndex + 1;
             document.getElementById('question-text').innerHTML = `\\( ${question.text} \\)`;
@@ -164,25 +128,33 @@
                 div.className = 'choice';
                 div.innerHTML = `\\( ${choice} \\)`;
                 div.onclick = () => {
-                    console.log(`選択肢がクリックされました: ${choice}`);
-                    submitAnswer(choice, question.correct_answer);
+                    showExplanation(choice, question.correct_answer, question.explanation, question.id);
                 };
                 choicesContainer.appendChild(div);
             });
 
+            document.getElementById('question-section').style.display = 'block';
+            document.getElementById('explanation-section').style.display = 'none';
+
             MathJax.typesetPromise();
         }
 
-        function submitAnswer(selected, correct) {
+        function showExplanation(selected, correct, explanation, questionId) {
             console.log(`選択された回答: ${selected}, 正解: ${correct}`);
-            const result = selected === correct ? "正解です！" : "不正解です。";
 
-            document.getElementById('result-message').textContent = result;
-            const explanation = questions[currentQuestionIndex].explanation || "解説はありません。";
+            // 成否のメッセージを表示
+            const resultMessage = selected === correct ? "正解です！" : "不正解です。";
+            document.getElementById('result-message').textContent = resultMessage;
+
+            // 解説を表示
             document.getElementById('explanation-text').innerHTML = `\\( ${explanation} \\)`;
 
+            // 選択肢を非表示にし、解説を表示
             document.getElementById('question-section').style.display = 'none';
             document.getElementById('explanation-section').style.display = 'block';
+
+            // 解答を記録
+            userAnswers.push({ id: questionId, answer: selected });
 
             MathJax.typesetPromise();
         }
@@ -192,19 +164,58 @@
 
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
-                document.getElementById('question-section').style.display = 'block';
-                document.getElementById('explanation-section').style.display = 'none';
                 loadQuestion();
             } else {
                 console.log("全ての問題が終了。結果画面に移動します。");
-                window.location.href = '/results/';
+                submitQuiz();
             }
         }
 
+        function submitQuiz() {
+            console.log("クイズ終了、解答を送信します。");
+
+            const form = document.getElementById('quiz-form');
+            userAnswers.forEach((entry, index) => {
+                const inputAnswer = document.createElement('input');
+                inputAnswer.type = 'hidden';
+                inputAnswer.name = `answer_${index}`;
+                inputAnswer.value = entry.answer;
+                form.appendChild(inputAnswer);
+
+                const inputQuestionId = document.createElement('input');
+                inputQuestionId.type = 'hidden';
+                inputQuestionId.name = `question_id_${index}`;
+                inputQuestionId.value = entry.id;
+                form.appendChild(inputQuestionId);
+            });
+
+            form.submit();
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            console.log("ページが読み込まれました");
             loadQuestion();
         });
     </script>
+</head>
+<body>
+    <div class="white-background">
+        <div class="quiz-container">
+            <div id="question-section">
+                <span id="question-number" class="question-number">1</span>
+                <p id="question-text"></p>
+                <div id="choices"></div>
+            </div>
+
+            <div id="explanation-section">
+                <p id="result-message"></p>
+                <p id="explanation-text"></p>
+                <center><button onclick="goToNextQuestion()">次の問題へ</button></center>
+            </div>
+        </div>
+    </div>
+
+    <form id="quiz-form" method="post" action="{% url 'submit_quiz' %}">
+        {% csrf_token %}
+    </form>
 </body>
 </html>
