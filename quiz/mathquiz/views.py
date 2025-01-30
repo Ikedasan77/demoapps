@@ -134,7 +134,7 @@ def submit_quiz_view(request):
         request.session['wrong_questions'] = wrong_questions
         request.session['questions'] = [q.id for q in questions]
 
-        return redirect('result')
+        return redirect('results')    # 'results' に修正
 
     return redirect('quiz')
 
