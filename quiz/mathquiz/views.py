@@ -25,7 +25,6 @@ def home(request):
 
 # **ログインビュー**
 def login_view(request):
-    # すでにログイン済みならクイズページへリダイレクト
     if request.user.is_authenticated:
         return redirect("/quiz/")
 
@@ -36,7 +35,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect("/quiz/")  # ログイン成功後、問題ページへ遷移
+            return redirect("/quiz/")
         else:
             messages.error(request, "ユーザーIDまたはパスワードが間違っています")
 
@@ -45,7 +44,6 @@ def login_view(request):
 
 # **新規登録ビュー**
 def register_view(request):
-    # すでにログイン済みならクイズページへリダイレクト
     if request.user.is_authenticated:
         return redirect("/quiz/")
 
@@ -54,14 +52,13 @@ def register_view(request):
         username = request.POST["username"]
         password = request.POST["password"]
 
-        # ユーザーIDの重複チェック
         if User.objects.filter(username=username).exists():
             messages.error(request, "このユーザーIDは既に使用されています")
         else:
             user = User.objects.create_user(username=username, email=email, password=password)
             user.save()
-            login(request, user)  # 登録後に自動でログイン
-            return redirect("/quiz/")  # 新規登録成功後に問題ページへ遷移
+            login(request, user)
+            return redirect("/quiz/")
 
     return render(request, "mathquiz/register.html")
 
@@ -69,43 +66,39 @@ def register_view(request):
 # **ログアウトビュー**
 def logout_view(request):
     logout(request)
-    return redirect("/login/")  # ログアウト後にログインページへ遷移
+    return redirect("/login/")
 
 
 # **問題表示ビュー**
 def quiz_view(request):
-    # ログインしていない場合はログインページへリダイレクト
     if not request.user.is_authenticated:
         return redirect("/login/")
 
     if request.method == 'GET':
         questions = list(Question.objects.prefetch_related('incorrect_choices').all())
 
-        # 出題する問題数
         num_questions = 10
         selected_questions = random.sample(questions, min(num_questions, len(questions)))
 
-        # 4択問題の選択肢を準備
         questions_with_choices = []
         for question in selected_questions:
             incorrect_choices = [escape(choice.text) for choice in question.incorrect_choices.all()]
             all_choices = incorrect_choices + [escape(question.correct_answer)]
-            random.shuffle(all_choices)  # 選択肢をランダムに並び替え
+            random.shuffle(all_choices)
 
             questions_with_choices.append({
                 'id': question.id,
-                'text': escape(question.text),  # 問題文をエスケープ
+                'text': escape(question.text),
                 'choices': all_choices,
-                'correct_answer': escape(question.correct_answer),  # 正解もエスケープ
+                'correct_answer': escape(question.correct_answer),
                 'category': escape(question.category.name) if question.category else '',
                 'explanation': escape(question.explanation or '')
             })
 
-        # JSONデータとして渡す
         safe_questions_json = json.dumps(questions_with_choices, ensure_ascii=False)
 
         return render(request, 'mathquiz/quiz.html', {
-            'questions_json': safe_questions_json  # エスケープ済みの問題データ
+            'questions_json': safe_questions_json
         })
 
     return redirect('quiz')
@@ -164,10 +157,14 @@ def result_view(request):
         for question in wrong_questions
     ]
 
-    total_score = len(questions) * 10
+    total_questions = len(questions)  # 出題された問題数
+    correct_answers = score  # 正解数
+    wrong_answers = total_questions - correct_answers  # 不正解数
+
+    total_score = 10  # 100点満点基準
     score_percent = (score / total_score) * 100 if total_score > 0 else 0
 
-    # 励ましメッセージを設定
+    # 励ましメッセージ
     encouragement_messages = {
         'high': "素晴らしい！次回もこの調子で頑張りましょう！",
         'medium': "よく頑張りました！復習してさらに高得点を目指しましょう！",
@@ -181,15 +178,15 @@ def result_view(request):
     else:
         encouragement_message = encouragement_messages['low']
 
-    # 次の学習トピックを設定
     next_topic = "二次方程式の解法"
 
     return render(request, 'mathquiz/result.html', {
         'score': score,
         'total_score': total_score,
         'score_percent': score_percent,
-        'correct_answers': score,
-        'total_questions': len(questions),
+        'correct_answers': correct_answers,  # 修正
+        'wrong_answers': wrong_answers,  # 追加
+        'total_questions': total_questions,
         'wrong_questions': wrong_questions_data,
         'encouragement_message': encouragement_message,
         'next_topic': next_topic
