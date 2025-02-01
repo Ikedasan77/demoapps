@@ -102,7 +102,7 @@
             <p>次は「{{ next_topic }}」を学習してみましょう！</p>
         </div>
 
-        <button onclick="location.href='/'">次の問題</button>
+        <button onclick="location.href='/quiz/'">次の問題</button>
     </div>
 
     <script>
@@ -114,8 +114,8 @@
                 labels: ['正解', '不正解'],
                 datasets: [{
                     data: [
-                        "{{ correct_answers|default:'0' }}",
-                        "{{ total_questions|add:'-correct_answers'|default:'0' }}"
+                        parseInt("{{ correct_answers }}", 10),
+                        parseInt("{{ wrong_answers }}", 10)
                     ],
                     backgroundColor: ['#4caf50', '#f44336']
                 }]
