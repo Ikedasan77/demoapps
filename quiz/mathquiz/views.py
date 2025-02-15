@@ -6,6 +6,7 @@ from .models import Question
 import random
 import json
 from django.utils.html import escape  # HTMLエスケープ用
+from collections import Counter  # 🔴 分野の統計を取るために追加
 
 
 # 回答の正規化（空白を削除して比較しやすくする）
@@ -148,15 +149,6 @@ def result_view(request):
     questions = Question.objects.filter(id__in=questions_ids)
     wrong_questions = Question.objects.filter(id__in=wrong_question_ids)
 
-    wrong_questions_data = [
-        {
-            'text': escape(question.text),
-            'category': escape(question.category.name) if question.category else '不明なカテゴリ',
-            'explanation': escape(question.explanation or '解説はありません。')
-        }
-        for question in wrong_questions
-    ]
-
     total_questions = len(questions)  # 出題された問題数
     correct_answers = score  # 正解数
     wrong_answers = total_questions - correct_answers  # 不正解数
@@ -187,7 +179,6 @@ def result_view(request):
         'correct_answers': correct_answers,  # 修正
         'wrong_answers': wrong_answers,  # 追加
         'total_questions': total_questions,
-        'wrong_questions': wrong_questions_data,
         'encouragement_message': encouragement_message,
         'next_topic': next_topic
     })

@@ -44,10 +44,11 @@
             margin: 20px 0;
         }
 
+        /* 🔴 励ましメッセージの文字色を白に変更 */
         .advice {
             font-size: 1.2rem;
             margin-top: 20px;
-            color: #00695c;
+            color: #ffffff;
         }
 
         button {
@@ -80,21 +81,6 @@
             <h3>励ましメッセージ</h3>
             <p class="advice">{{ encouragement_message }}</p>
         </div>
-
-        <!-- 復習が必要な分野 -->
-        {% if wrong_questions %}
-        <div class="chalkboard">
-            <h3>復習が必要な分野</h3>
-            <ul>
-                {% for question in wrong_questions %}
-                    <li>
-                        <strong>分野: {{ question.category }}</strong><br>
-                        解説: {{ question.explanation }}
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-        {% endif %}
 
         <!-- 次のステップ -->
         <div class="chalkboard">
