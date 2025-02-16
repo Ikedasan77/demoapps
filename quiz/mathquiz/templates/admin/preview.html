@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>問題プレビュー</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #333;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            margin-top: 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>問題プレビュー</h2>
+    <p><strong>問題文:</strong> {{ question.text }}</p>
+    <p><strong>カテゴリ:</strong> {{ question.category }}</p>
+    <p><strong>正解:</strong> {{ question.correct_answer }}</p>
+    <p><strong>解説:</strong> {{ question.explanation }}</p>
+    <a href="javascript:window.close()" class="btn">閉じる</a>
+</div>
+
+</body>
+</html>

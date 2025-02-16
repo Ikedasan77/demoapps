@@ -1,0 +1,10 @@
+{% extends "admin/change_form.html" %}
+
+{% block object-tools %}
+    {{ block.super }}
+    {% if preview_button %}
+        <div style="margin-top: 10px;">
+            {{ preview_button|safe }}
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,23 +1,27 @@
-from django.contrib import admin  # 管理画面のカスタマイズ用モジュールをインポート
-from .models import Category, Question, IncorrectChoice  # CategoryとQuestion、IncorrectChoiceモデルをインポート
+from django.contrib import admin
+from django.urls import reverse, path
+from django.utils.html import format_html
+from django.shortcuts import get_object_or_404, render
+from .models import Category, Question, IncorrectChoice
 from django.db import models
 from django.forms import Textarea
 from django.utils.safestring import mark_safe
 
 # サイト全体のヘッダーとタイトルをカスタマイズ
-admin.site.site_header = "問題登録管理"  # 管理画面の上部に表示されるヘッダー
-admin.site.site_title = "問題管理サイト"  # ブラウザタブに表示されるタイトル
-admin.site.index_title = "問題登録"  # 管理画面のインデックスページのタイトル
+admin.site.site_header = "問題登録管理"
+admin.site.site_title = "問題管理サイト"
+admin.site.index_title = "問題登録"
 
 # カテゴリ管理用の管理クラス
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("id", "name")  # 一覧で表示するフィールド
-    search_fields = ("name",)  # カテゴリ名で検索可能にする設定
+    list_display = ("id", "name")
+    search_fields = ("name",)
 
+# **このクラスを先に定義**
 class IncorrectChoiceInline(admin.TabularInline):
     model = IncorrectChoice
-    extra = 3  # デフォルトで3つの空の入力欄を表示
+    extra = 3
     verbose_name = "不正解"
     verbose_name_plural = "不正解の選択肢"
     formfield_overrides = {
@@ -29,41 +33,51 @@ class IncorrectChoiceInline(admin.TabularInline):
             'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js',
         ]
 
-# 問題管理用の管理クラス
-@admin.register(Question)
+# **QuestionAdmin を後に定義**
 class QuestionAdmin(admin.ModelAdmin):
-    inlines = [IncorrectChoiceInline]  # インラインフォームを追加
+    inlines = [IncorrectChoiceInline]  # ← ここでエラーが出ないようにする
 
-    # 一覧画面で表示するフィールド
-    list_display = ("id", "text", "category", "correct_answer", "explanation_preview")
-    list_filter = ("category",)  # カテゴリで絞り込み可能
-    search_fields = ("text",)  # 問題文で検索可能
+    list_display = ("id", "text", "category", "correct_answer", "explanation_preview", "preview_button")
+    list_filter = ("category",)
+    search_fields = ("text",)
 
-    # フォームのカスタマイズ: テキストエリアのサイズ変更
     formfield_overrides = {
         models.TextField: {"widget": Textarea(attrs={"rows": 3, "cols": 60})},
     }
 
-    # 動画や画像リンクのプレビューを表示
     def explanation_preview(self, obj):
-        if "http" in obj.explanation:  # 解説にリンクが含まれる場合のみプレビュー表示
+        if "http" in obj.explanation:
             return mark_safe(f'<a href="{obj.explanation}" target="_blank">プレビュー</a>')
         return obj.explanation
-    explanation_preview.short_description = "解説プレビュー"  # プレビュー列のヘッダー名
+    explanation_preview.short_description = "解説プレビュー"
 
-    # 管理画面のフォームをセクションごとに分割
-    fieldsets = (
-        (None, {  # 基本情報
-            "fields": ("text", "correct_answer", "category")
-        }),
-        ("詳細情報", {  # その他の詳細情報
-            "fields": ("explanation", "algebra_expression", "root_value")
-        }),
-    )
+    def preview_button(self, obj):
+        url = reverse("admin:question_preview", args=[obj.pk])
+        return format_html('<a class="button" href="{}" target="_blank">編集した問題をプレビュー</a>', url)
+    preview_button.short_description = "プレビュー"
 
-    # Mediaクラスを追加してJavaScriptを読み込み
-    class Media:
-        js = [
-            'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js',  # MathJaxライブラリ
-            'admin/js/latex_preview.js',  # ローカルのプレビュー用スクリプト
+    def change_view(self, request, object_id, form_url="", extra_context=None):
+        extra_context = extra_context or {}
+        preview_url = reverse("admin:question_preview", args=[object_id])
+
+        print(f"DEBUG: change_view() called for question {object_id}")  # デバッグログ
+        print(f"DEBUG: preview URL generated: {preview_url}")  # デバッグログ
+        
+        extra_context["preview_button"] = format_html(
+            '<a class="button" href="{}" target="_blank" style="margin-bottom: 10px; display: inline-block;">📄 編集した問題をプレビュー</a>', 
+            preview_url
+        )
+        return super().change_view(request, object_id, form_url, extra_context=extra_context)
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('question_preview/<int:question_id>/', self.admin_site.admin_view(self.preview_question), name="question_preview"),
         ]
+        return custom_urls + urls
+
+    def preview_question(self, request, question_id):
+        question = get_object_or_404(Question, pk=question_id)
+        return render(request, "admin/preview.html", {"question": question})
+
+admin.site.register(Question, QuestionAdmin)
