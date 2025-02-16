@@ -18,7 +18,7 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ("id", "name")
     search_fields = ("name",)
 
-# **このクラスを先に定義**
+# **不正解選択肢のインライン設定**
 class IncorrectChoiceInline(admin.TabularInline):
     model = IncorrectChoice
     extra = 3
@@ -33,9 +33,9 @@ class IncorrectChoiceInline(admin.TabularInline):
             'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js',
         ]
 
-# **QuestionAdmin を後に定義**
+# **問題管理用の管理クラス**
 class QuestionAdmin(admin.ModelAdmin):
-    inlines = [IncorrectChoiceInline]  # ← ここでエラーが出ないようにする
+    inlines = [IncorrectChoiceInline]  # インラインフォーム追加
 
     list_display = ("id", "text", "category", "correct_answer", "explanation_preview", "preview_button")
     list_filter = ("category",)
@@ -45,39 +45,49 @@ class QuestionAdmin(admin.ModelAdmin):
         models.TextField: {"widget": Textarea(attrs={"rows": 3, "cols": 60})},
     }
 
+    # **解説のプレビュー**
     def explanation_preview(self, obj):
         if "http" in obj.explanation:
             return mark_safe(f'<a href="{obj.explanation}" target="_blank">プレビュー</a>')
         return obj.explanation
     explanation_preview.short_description = "解説プレビュー"
 
+    # **一覧画面のプレビューボタン**
     def preview_button(self, obj):
-        url = reverse("admin:question_preview", args=[obj.pk])
+        url = reverse("admin:mathquiz_question_preview", args=[obj.pk])  # 修正: `admin:` を追加
         return format_html('<a class="button" href="{}" target="_blank">編集した問題をプレビュー</a>', url)
     preview_button.short_description = "プレビュー"
 
+    # **編集画面のプレビューボタンを「保存して編集を続ける」の右側に配置**
     def change_view(self, request, object_id, form_url="", extra_context=None):
         extra_context = extra_context or {}
-        preview_url = reverse("admin:question_preview", args=[object_id])
+        preview_url = reverse("admin:mathquiz_question_preview", args=[object_id])  # 修正: `admin:` を追加
 
-        print(f"DEBUG: change_view() called for question {object_id}")  # デバッグログ
-        print(f"DEBUG: preview URL generated: {preview_url}")  # デバッグログ
-        
+        # **デバッグログ**
+        print(f"DEBUG: change_view() called for question {object_id}")  
+        print(f"DEBUG: preview URL generated: {preview_url}")  
+
+        # **プレビューボタンを管理画面のボタンと統一**
         extra_context["preview_button"] = format_html(
-            '<a class="button" href="{}" target="_blank" style="margin-bottom: 10px; display: inline-block;">📄 編集した問題をプレビュー</a>', 
+            '<a class="button preview-button" href="{}" target="_blank" style="background-color: #5b80b2; color: white; padding: 8px 16px; border-radius: 4px;">'
+            '📄 編集した問題をプレビュー</a>',
             preview_url
         )
+
         return super().change_view(request, object_id, form_url, extra_context=extra_context)
 
+    # **カスタムURLを追加**
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
-            path('question_preview/<int:question_id>/', self.admin_site.admin_view(self.preview_question), name="question_preview"),
+            path('question_preview/<int:question_id>/', self.admin_site.admin_view(self.preview_question), name="mathquiz_question_preview"),  # 修正: URL名変更
         ]
-        return custom_urls + urls
+        return custom_urls + urls  # 既存のURLと統合
 
+    # **プレビュー画面のビュー関数**
     def preview_question(self, request, question_id):
-        question = get_object_or_404(Question, pk=question_id)
-        return render(request, "admin/preview.html", {"question": question})
+        question = get_object_or_404(Question, pk=question_id)  # 指定したIDの問題を取得
+        return render(request, "admin/preview.html", {"question": question})  # preview.html テンプレートをレンダリング
 
+# `QuestionAdmin` を Django に登録
 admin.site.register(Question, QuestionAdmin)

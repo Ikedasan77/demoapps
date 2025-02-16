@@ -5,46 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>問題プレビュー</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 20px;
-            background-color: #f9f9f9;
-        }
-        .container {
-            max-width: 600px;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            color: #333;
-        }
-        .btn {
-            display: inline-block;
-            padding: 10px 15px;
-            margin-top: 15px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .btn:hover {
-            background-color: #0056b3;
-        }
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .question { font-size: 18px; font-weight: bold; }
+        .answer { margin-top: 10px; }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <h2>問題プレビュー</h2>
-    <p><strong>問題文:</strong> {{ question.text }}</p>
-    <p><strong>カテゴリ:</strong> {{ question.category }}</p>
-    <p><strong>正解:</strong> {{ question.correct_answer }}</p>
-    <p><strong>解説:</strong> {{ question.explanation }}</p>
-    <a href="javascript:window.close()" class="btn">閉じる</a>
-</div>
-
+    <div class="container">
+        <h1>問題プレビュー</h1>
+        <p class="question">{{ question.text }}</p>
+        <p>カテゴリ: {{ question.category }}</p>
+        <p>正解: {{ question.correct_answer }}</p>
+        <p>解説: {{ question.explanation }}</p>
+        <a href="javascript:window.close();" style="color: blue;">閉じる</a>
+    </div>
 </body>
 </html>
