@@ -6,17 +6,12 @@ from .models import Category, Question, IncorrectChoice
 from django.db import models
 from django.forms import Textarea
 from django.utils.safestring import mark_safe
+import json
 
 # サイト全体のヘッダーとタイトルをカスタマイズ
 admin.site.site_header = "問題登録管理"
 admin.site.site_title = "問題管理サイト"
 admin.site.index_title = "問題登録"
-
-# カテゴリ管理用の管理クラス
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("id", "name")
-    search_fields = ("name",)
 
 # **不正解選択肢のインライン設定**
 class IncorrectChoiceInline(admin.TabularInline):
@@ -87,7 +82,27 @@ class QuestionAdmin(admin.ModelAdmin):
     # **プレビュー画面のビュー関数**
     def preview_question(self, request, question_id):
         question = get_object_or_404(Question, pk=question_id)  # 指定したIDの問題を取得
-        return render(request, "admin/preview.html", {"question": question})  # preview.html テンプレートをレンダリング
+        
+        # 選択肢のリストを作成
+        choices = [question.correct_answer] + list(IncorrectChoice.objects.filter(question=question).values_list("text", flat=True))
+        
+        # シャッフルする (ランダム化したい場合)
+        import random
+        random.shuffle(choices)
+
+        # JSON形式に変換
+        question_data = {
+            "text": question.text,
+            "choices": choices,
+            "correct_answer": question.correct_answer,
+            "explanation": question.explanation,
+            "id": question.id,
+        }
+        
+        # テンプレートへデータを渡す
+        return render(request, "admin/preview.html", {
+            "question_json": json.dumps(question_data),
+        })
 
 # `QuestionAdmin` を Django に登録
 admin.site.register(Question, QuestionAdmin)
