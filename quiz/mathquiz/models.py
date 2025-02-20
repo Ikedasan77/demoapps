@@ -17,10 +17,6 @@ class Question(models.Model):
         verbose_name="問題文",
         help_text="MathJaxを用いた数式を使用できます。"
     )
-    correct_answer = models.TextField(
-        verbose_name="正答",
-        help_text="複数の正答をカンマ区切りで入力できます（例: √2, 1/2, ∞）。"
-    )
     explanation = models.TextField(
         verbose_name="解説",
         blank=True,
@@ -40,13 +36,14 @@ class Question(models.Model):
     category = models.ForeignKey(
         Category,
         verbose_name="カテゴリ",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,  # ✅ カテゴリ削除時にNULLを設定
+        null=True,
+        blank=True,
         help_text="この問題が属するカテゴリを選択してください。"
     )
 
-    # 自動コピー機能を追加
     def save(self, *args, **kwargs):
-        if not self.algebra_expression:  # 数式表現が空の場合のみ自動コピー
+        if not self.algebra_expression and self.text:  # ✅ text が None の場合のチェック
             self.algebra_expression = self.text
         super().save(*args, **kwargs)
 
@@ -55,7 +52,28 @@ class Question(models.Model):
         verbose_name_plural = "登録した問題"
 
     def __str__(self):
-        return f"[{self.category.name}] {self.text}"
+        category_name = self.category.name if self.category else "未分類"
+        return f"[{category_name}] {self.text}"
+
+
+class CorrectAnswer(models.Model):  # ✅ 正解の選択肢を独立したモデルに変更
+    question = models.ForeignKey(
+        Question,
+        on_delete=models.CASCADE,
+        related_name="correct_answers",
+        verbose_name="正答"
+    )
+    text = models.TextField(
+        verbose_name="正解の選択肢",
+        help_text="この選択肢を登録してください。"
+    )
+
+    class Meta:
+        verbose_name = "正解の選択肢"
+        verbose_name_plural = "正解の選択肢"
+
+    def __str__(self):
+        return f"正解: {self.text} (問題: {self.question.text})"
 
 
 class IncorrectChoice(models.Model):

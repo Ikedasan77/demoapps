@@ -20,26 +20,28 @@ from django.conf import settings
 from django.conf.urls.static import static
 from mathquiz import views  # mathquiz/views.py をインポート
 
-# 🔴【追加】ログイン・新規登録・ログアウトのURLを追加
 urlpatterns = [
     path('admin/', admin.site.urls),  # 管理サイト
     path('', views.home, name='home'),  # ホームページ
 
-    # 🔴【追加】ログイン・新規登録・ログアウト
-    path('login/', views.login_view, name='login'),  # ログインページ
-    path('register/', views.register_view, name='register'),  # 新規登録ページ
-    path('logout/', views.logout_view, name='logout'),  # ログアウト処理
+    # ✅ ログイン・新規登録・ログアウト
+    path('login/', views.login_view, name='login'),  
+    path('register/', views.register_view, name='register'),  
+    path('logout/', views.logout_view, name='logout'),
 
-    # クイズ関連のURL
-    path('quiz/', views.quiz_view, name='quiz'),  # クイズページ
-    path('quiz/submit/', views.submit_quiz_view, name='submit_quiz'),  # クイズ送信
-    path('results/', views.result_view, name='results'),  # 結果ページ
+    # ✅ 問題選択画面を追加
+    path('category_selection/', views.category_selection_view, name='category_selection'),  # ✅ 追加
+
+    # ✅ クイズ関連
+    path('quiz/<str:category>/', views.quiz_view, name='quiz'),  # カテゴリ別クイズページ
+    path('quiz/submit/', views.submit_quiz_view, name='submit_quiz'),  
+    path('results/', views.result_view, name='results'),  
 ]
 
-# Debug Toolbar 用の URL パターンを追加
-if settings.DEBUG:  # デバッグモードの場合のみ有効
+# ✅ Debug Toolbar 用（デバッグ時のみ有効）
+if settings.DEBUG:
     import debug_toolbar
     urlpatterns += [
-        path('__debug__/', include(debug_toolbar.urls)),  # Debug Toolbar のルートを追加
+        path('__debug__/', include(debug_toolbar.urls)),  
     ]
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

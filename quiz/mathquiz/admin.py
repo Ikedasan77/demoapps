@@ -1,108 +1,72 @@
 from django.contrib import admin
-from django.urls import reverse, path
-from django.utils.html import format_html
-from django.shortcuts import get_object_or_404, render
-from .models import Category, Question, IncorrectChoice
-from django.db import models
-from django.forms import Textarea
 from django.utils.safestring import mark_safe
-import json
+from django.urls import reverse
+from django.utils.html import format_html
+from .models import Category, Question, CorrectAnswer, IncorrectChoice
 
-# サイト全体のヘッダーとタイトルをカスタマイズ
-admin.site.site_header = "問題登録管理"
-admin.site.site_title = "問題管理サイト"
-admin.site.index_title = "問題登録"
 
-# **不正解選択肢のインライン設定**
+class CorrectAnswerInline(admin.TabularInline):
+    """問題に紐づく正解の選択肢をインライン編集できるようにする"""
+    model = CorrectAnswer
+    extra = 1  # 新規追加用に1行表示
+
+
 class IncorrectChoiceInline(admin.TabularInline):
+    """問題に紐づく不正解の選択肢をインライン編集できるようにする"""
     model = IncorrectChoice
-    extra = 3
-    verbose_name = "不正解"
-    verbose_name_plural = "不正解の選択肢"
-    formfield_overrides = {
-        models.TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 40})},
-    }
+    extra = 3  # 新規追加用に3行表示
 
-    class Media:
-        js = [
-            'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js',
-        ]
 
-# **問題管理用の管理クラス**
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    """カテゴリ管理"""
+    list_display = ('id', 'name')
+    search_fields = ('name',)
+
+
+@admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    inlines = [IncorrectChoiceInline]  # インラインフォーム追加
+    """問題管理"""
+    list_display = ('id', 'text', 'category', 'get_correct_answers', 'preview_link')  # ✅ 正解とプレビューリンクを追加
+    search_fields = ('text', 'category__name')
+    list_filter = ('category',)
+    inlines = [CorrectAnswerInline, IncorrectChoiceInline]  # ✅ 正解・不正解をインライン編集可能に
 
-    list_display = ("id", "text", "category", "correct_answer", "explanation_preview", "preview_button")
-    list_filter = ("category",)
-    search_fields = ("text",)
+    def get_correct_answers(self, obj):
+        """管理画面で正解の選択肢を表示"""
+        return ", ".join([answer.text for answer in obj.correct_answers.all()])
+    get_correct_answers.short_description = "正解の選択肢"
 
-    formfield_overrides = {
-        models.TextField: {"widget": Textarea(attrs={"rows": 3, "cols": 60})},
-    }
+    def preview_link(self, obj):
+        """プレビューボタンを追加"""
+        url = reverse('preview_question', args=[obj.id])  # ✅ プレビュー用のURLを生成
+        return format_html('<a href="{}" target="_blank">プレビュー</a>', url)
+    preview_link.short_description = "プレビュー"
 
-    # **解説のプレビュー**
-    def explanation_preview(self, obj):
-        if "http" in obj.explanation:
-            return mark_safe(f'<a href="{obj.explanation}" target="_blank">プレビュー</a>')
-        return obj.explanation
-    explanation_preview.short_description = "解説プレビュー"
 
-    # **一覧画面のプレビューボタン**
-    def preview_button(self, obj):
-        url = reverse("admin:mathquiz_question_preview", args=[obj.pk])  # 修正: `admin:` を追加
-        return format_html('<a class="button" href="{}" target="_blank">編集した問題をプレビュー</a>', url)
-    preview_button.short_description = "プレビュー"
+# ✅ プレビュー用のビューを追加するためのURLパターン
+from django.urls import path
+from django.shortcuts import render, get_object_or_404
 
-    # **編集画面のプレビューボタンを「保存して編集を続ける」の右側に配置**
-    def change_view(self, request, object_id, form_url="", extra_context=None):
-        extra_context = extra_context or {}
-        preview_url = reverse("admin:mathquiz_question_preview", args=[object_id])  # 修正: `admin:` を追加
+def preview_question(request, question_id):
+    """管理画面からプレビュー画面を表示するビュー"""
+    question = get_object_or_404(Question, id=question_id)
+    return render(request, 'mathquiz/question_preview.html', {'question': question})
 
-        # **デバッグログ**
-        print(f"DEBUG: change_view() called for question {object_id}")  
-        print(f"DEBUG: preview URL generated: {preview_url}")  
 
-        # **プレビューボタンを管理画面のボタンと統一**
-        extra_context["preview_button"] = format_html(
-            '<a class="button preview-button" href="{}" target="_blank" style="background-color: #5b80b2; color: white; padding: 8px 16px; border-radius: 4px;">'
-            '📄 編集した問題をプレビュー</a>',
-            preview_url
-        )
+# ✅ Djangoの管理画面のURLをカスタマイズ
+admin.site.site_header = "計算アプリ管理画面"
+admin.site.site_title = "計算アプリ"
+admin.site.index_title = "管理メニュー"
 
-        return super().change_view(request, object_id, form_url, extra_context=extra_context)
 
-    # **カスタムURLを追加**
-    def get_urls(self):
-        urls = super().get_urls()
+# ✅ DjangoのURL設定をカスタマイズ
+def get_admin_urls(urls):
+    def get_urls():
         custom_urls = [
-            path('question_preview/<int:question_id>/', self.admin_site.admin_view(self.preview_question), name="mathquiz_question_preview"),  # 修正: URL名変更
+            path('question/<int:question_id>/preview/', preview_question, name='preview_question'),  # プレビュー用URL
         ]
-        return custom_urls + urls  # 既存のURLと統合
+        return custom_urls + urls
+    return get_urls
 
-    # **プレビュー画面のビュー関数**
-    def preview_question(self, request, question_id):
-        question = get_object_or_404(Question, pk=question_id)  # 指定したIDの問題を取得
-        
-        # 選択肢のリストを作成
-        choices = [question.correct_answer] + list(IncorrectChoice.objects.filter(question=question).values_list("text", flat=True))
-        
-        # シャッフルする (ランダム化したい場合)
-        import random
-        random.shuffle(choices)
-
-        # JSON形式に変換
-        question_data = {
-            "text": question.text,
-            "choices": choices,
-            "correct_answer": question.correct_answer,
-            "explanation": question.explanation,
-            "id": question.id,
-        }
-        
-        # テンプレートへデータを渡す
-        return render(request, "admin/preview.html", {
-            "question_json": json.dumps(question_data),
-        })
-
-# `QuestionAdmin` を Django に登録
-admin.site.register(Question, QuestionAdmin)
+admin.site.get_urls = get_admin_urls(admin.site.get_urls())
