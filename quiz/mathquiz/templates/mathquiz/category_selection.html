@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>問題選択</title>
+
+    <style>
+        body {
+            background-color: #00AAEF;
+            font-family: Arial, sans-serif;
+            color: #FFFFFF;
+            margin: 0;
+            padding: 0;
+        }
+
+        .white-background {
+            background-color: #FFFFFF;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            margin: 30px auto;
+            max-width: 600px;
+            border-radius: 10px;
+            text-align: center;
+            padding-bottom: 30px;
+        }
+
+        h2 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        .category-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px; /* ✅ ボタンの間隔を広げる */
+        }
+
+        .category-btn {
+            background-color: #4CAF50;
+            color: #FFFFFF;
+            padding: 15px; /* ✅ ボタンのサイズを統一 */
+            border-radius: 5px;
+            font-size: 1.2rem; /* ✅ 文字を少し大きく */
+            border: none;
+            cursor: pointer;
+            width: 45%;
+            max-width: 250px;
+            margin: 5px 0; /* ✅ ボタンの上下間隔を追加 */
+            transition: background-color 0.3s ease, transform 0.2s ease; /* ✅ なめらかな変化 */
+        }
+
+        .category-btn:hover {
+            background-color: #388E3C; /* ✅ ホバー時に濃い緑に変更 */
+            transform: scale(1.04); /* ✅ ホバー時に少し拡大 */
+        }
+
+        .full-width {
+            width: 95%;
+            max-width: 500px;
+        }
+
+        .logout-btn {
+            background-color: #FF5733;
+            padding: 12px 20px;
+            color: #FFF;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background-color 0.3s ease, transform 0.2s ease; /* ✅ アニメーション追加 */
+            display: inline-block;
+        }
+
+        .logout-btn:hover {
+            background-color: #D43F00; /* ✅ 濃いオレンジ */
+            transform: scale(1.1); /* ✅ ホバー時に少し拡大 */
+        }
+    </style>
+</head>
+<body>
+    <div class="white-background">
+        <h2>問題のカテゴリーを選択</h2>
+
+        <div class="category-container">
+            <form action="{% url 'quiz' category='selected_category' %}" method="get">
+                <button type="submit" name="category" value="正負の数" class="category-btn">正負の数</button>
+                <button type="submit" name="category" value="文字と式" class="category-btn">文字と式</button>
+                <button type="submit" name="category" value="一次方程式" class="category-btn">一次方程式</button>
+                <button type="submit" name="category" value="連立方程式" class="category-btn">連立方程式</button>
+                <button type="submit" name="category" value="展開" class="category-btn">展開</button>
+                <button type="submit" name="category" value="因数分解" class="category-btn">因数分解</button>
+                <button type="submit" name="category" value="平方根の計算" class="category-btn">平方根の計算</button>
+                <button type="submit" name="category" value="二次方程式" class="category-btn">二次方程式</button>
+                <button type="submit" name="category" value="全分野" class="category-btn full-width">全分野</button>
+            </form>
+        </div>
+
+        <a href="{% url 'logout' %}" class="logout-btn">ログアウト</a>
+    </div>
+</body>
+</html>

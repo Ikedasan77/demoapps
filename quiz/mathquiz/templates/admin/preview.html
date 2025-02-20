@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>問題プレビュー</title>
+
+    <!-- MathJax 設定 -->
+    <script type="text/javascript">
+        MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                tags: 'none'
+            },
+            svg: {
+                fontCache: 'global',
+                displayAlign: 'center',
+                linebreaks: { automatic: true, width: 'container' }
+            }
+        };
+    </script>
+
+    <!-- MathJax ライブラリ -->
+    <script
+        type="text/javascript"
+        defer
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
+    </script>
+
+    <style>
+        body {
+            background-color: #00AAEF;
+            font-family: Arial, sans-serif;
+            color: #FFFFFF;
+            margin: 0;
+            padding: 0;
+        }
+
+        .white-background {
+            background-color: #FFFFFF;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            margin: 30px auto;
+            max-width: 900px;
+        }
+
+        .quiz-container {
+            background-color: #4CAF50;
+            border: 5px solid #6b4226;
+            padding: 20px;
+            margin: 0 auto;
+            max-width: 800px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #FFFFFF;
+            text-align: center;
+        }
+
+        .choice {
+            background-color: #8B0000;
+            color: #FFFFFF;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            border: none;
+            display: block;
+            width: 80%;
+            margin: 10px auto;
+        }
+
+        .choice:hover {
+            background-color: #FF4500;
+        }
+
+        #explanation-section {
+            background-color: #4CAF50;
+            color: #FFFFFF;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px auto;
+            max-width: 800px;
+            font-size: 1.5rem;
+            line-height: 1.8;
+            text-align: left;
+            display: none;
+        }
+
+        button {
+            background-color: #008CBA;
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #005F7A;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const question = JSON.parse(`{{ question_json|escapejs }}`);
+
+            document.getElementById('question-number').textContent = "プレビュー";
+            document.getElementById('question-text').innerHTML = `\\( ${question.text} \\)`;
+
+            const choicesContainer = document.getElementById('choices');
+            choicesContainer.innerHTML = '';
+
+            question.choices.forEach(choice => {
+                const div = document.createElement('div');
+                div.className = 'choice';
+                div.innerHTML = `\\( ${choice} \\)`;
+                div.onclick = () => {
+                    showExplanation(choice, question.correct_answer, question.explanation);
+                };
+                choicesContainer.appendChild(div);
+            });
+
+            MathJax.typesetPromise();
+        });
+
+        function showExplanation(selected, correct, explanation) {
+            const resultMessage = selected === correct ? "正解です！" : "不正解です。";
+            document.getElementById('result-message').textContent = resultMessage;
+            document.getElementById('explanation-text').innerHTML = `\\( ${explanation} \\)`;
+
+            document.getElementById('question-section').style.display = 'none';
+            document.getElementById('explanation-section').style.display = 'block';
+
+            MathJax.typesetPromise();
+        }
+
+        function closePreview() {
+            window.close();
+        }
+    </script>
+</head>
+<body>
+    <div class="white-background">
+        <div class="quiz-container">
+            <div id="question-section">
+                <span id="question-number" class="question-number">1</span>
+                <p id="question-text"></p>
+                <div id="choices"></div>
+            </div>
+
+            <div id="explanation-section">
+                <p id="result-message"></p>
+                <p id="explanation-text"></p>
+                <center>
+                    <button onclick="closePreview()">閉じる</button>
+                </center>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

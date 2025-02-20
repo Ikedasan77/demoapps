@@ -1,69 +1,72 @@
-from django.contrib import admin  # 管理画面のカスタマイズ用モジュールをインポート
-from .models import Category, Question, IncorrectChoice  # CategoryとQuestion、IncorrectChoiceモデルをインポート
-from django.db import models
-from django.forms import Textarea
+from django.contrib import admin
 from django.utils.safestring import mark_safe
+from django.urls import reverse
+from django.utils.html import format_html
+from .models import Category, Question, CorrectAnswer, IncorrectChoice
 
-# サイト全体のヘッダーとタイトルをカスタマイズ
-admin.site.site_header = "問題登録管理"  # 管理画面の上部に表示されるヘッダー
-admin.site.site_title = "問題管理サイト"  # ブラウザタブに表示されるタイトル
-admin.site.index_title = "問題登録"  # 管理画面のインデックスページのタイトル
 
-# カテゴリ管理用の管理クラス
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("id", "name")  # 一覧で表示するフィールド
-    search_fields = ("name",)  # カテゴリ名で検索可能にする設定
+class CorrectAnswerInline(admin.TabularInline):
+    """問題に紐づく正解の選択肢をインライン編集できるようにする"""
+    model = CorrectAnswer
+    extra = 1  # 新規追加用に1行表示
+
 
 class IncorrectChoiceInline(admin.TabularInline):
+    """問題に紐づく不正解の選択肢をインライン編集できるようにする"""
     model = IncorrectChoice
-    extra = 3  # デフォルトで3つの空の入力欄を表示
-    verbose_name = "不正解"
-    verbose_name_plural = "不正解の選択肢"
-    formfield_overrides = {
-        models.TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 40})},
-    }
+    extra = 3  # 新規追加用に3行表示
 
-    class Media:
-        js = [
-            'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js',
-        ]
 
-# 問題管理用の管理クラス
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    """カテゴリ管理"""
+    list_display = ('id', 'name')
+    search_fields = ('name',)
+
+
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    inlines = [IncorrectChoiceInline]  # インラインフォームを追加
+    """問題管理"""
+    list_display = ('id', 'text', 'category', 'get_correct_answers', 'preview_link')  # ✅ 正解とプレビューリンクを追加
+    search_fields = ('text', 'category__name')
+    list_filter = ('category',)
+    inlines = [CorrectAnswerInline, IncorrectChoiceInline]  # ✅ 正解・不正解をインライン編集可能に
 
-    # 一覧画面で表示するフィールド
-    list_display = ("id", "text", "category", "correct_answer", "explanation_preview")
-    list_filter = ("category",)  # カテゴリで絞り込み可能
-    search_fields = ("text",)  # 問題文で検索可能
+    def get_correct_answers(self, obj):
+        """管理画面で正解の選択肢を表示"""
+        return ", ".join([answer.text for answer in obj.correct_answers.all()])
+    get_correct_answers.short_description = "正解の選択肢"
 
-    # フォームのカスタマイズ: テキストエリアのサイズ変更
-    formfield_overrides = {
-        models.TextField: {"widget": Textarea(attrs={"rows": 3, "cols": 60})},
-    }
+    def preview_link(self, obj):
+        """プレビューボタンを追加"""
+        url = reverse('preview_question', args=[obj.id])  # ✅ プレビュー用のURLを生成
+        return format_html('<a href="{}" target="_blank">プレビュー</a>', url)
+    preview_link.short_description = "プレビュー"
 
-    # 動画や画像リンクのプレビューを表示
-    def explanation_preview(self, obj):
-        if "http" in obj.explanation:  # 解説にリンクが含まれる場合のみプレビュー表示
-            return mark_safe(f'<a href="{obj.explanation}" target="_blank">プレビュー</a>')
-        return obj.explanation
-    explanation_preview.short_description = "解説プレビュー"  # プレビュー列のヘッダー名
 
-    # 管理画面のフォームをセクションごとに分割
-    fieldsets = (
-        (None, {  # 基本情報
-            "fields": ("text", "correct_answer", "category")
-        }),
-        ("詳細情報", {  # その他の詳細情報
-            "fields": ("explanation", "algebra_expression", "root_value")
-        }),
-    )
+# ✅ プレビュー用のビューを追加するためのURLパターン
+from django.urls import path
+from django.shortcuts import render, get_object_or_404
 
-    # Mediaクラスを追加してJavaScriptを読み込み
-    class Media:
-        js = [
-            'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js',  # MathJaxライブラリ
-            'admin/js/latex_preview.js',  # ローカルのプレビュー用スクリプト
+def preview_question(request, question_id):
+    """管理画面からプレビュー画面を表示するビュー"""
+    question = get_object_or_404(Question, id=question_id)
+    return render(request, 'mathquiz/question_preview.html', {'question': question})
+
+
+# ✅ Djangoの管理画面のURLをカスタマイズ
+admin.site.site_header = "計算アプリ管理画面"
+admin.site.site_title = "計算アプリ"
+admin.site.index_title = "管理メニュー"
+
+
+# ✅ DjangoのURL設定をカスタマイズ
+def get_admin_urls(urls):
+    def get_urls():
+        custom_urls = [
+            path('question/<int:question_id>/preview/', preview_question, name='preview_question'),  # プレビュー用URL
         ]
+        return custom_urls + urls
+    return get_urls
+
+admin.site.get_urls = get_admin_urls(admin.site.get_urls())

@@ -16,7 +16,6 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -32,9 +31,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -42,9 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'mathquiz', # 作成したアプリケーション名が含まれているか確認
+    'mathquiz',  # 作成したアプリケーション名が含まれているか確認
     'debug_toolbar',  # Django Debug Toolbar
 ]
+
+# 🔹 セキュリティ関連の設定
+CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:8000"]  # ✅ CSRF エラー回避のため追加
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -57,7 +57,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-#Django Debug Toolbarを127.0.0.1のみで動作
+# Django Debug Toolbarを127.0.0.1のみで動作
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
@@ -67,9 +67,13 @@ ROOT_URLCONF = 'quiz.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"],  # カスタムテンプレートのパス
+        'DIRS': [
+            BASE_DIR / "templates",  # 既存のカスタムテンプレート
+            BASE_DIR / "mathquiz/templates",  # 追加する！
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
+            'debug': True,  # デバッグオプションを追加
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
@@ -77,8 +81,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
             ],
         },
-    },
-]
+    }
+]  # ← ここで TEMPLATES の二重定義を削除
 
 WSGI_APPLICATION = 'quiz.wsgi.application'
 
@@ -91,7 +95,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -111,7 +114,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -123,7 +125,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
@@ -133,7 +134,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'mathquiz/static',  # プロジェクト内の静的ファイルディレクトリ
 ]
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # collectstaticコマンドで収集される静的ファイルの保存先tatic'),  # 正しいディレクトリパスを指定
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # ← コメントの崩れを修正
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -149,4 +150,4 @@ SESSION_COOKIE_AGE = 1800
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  
 
 # セッションの保存を強制
-SESSION_SAVE_EVERY_REQUEST = True  
+SESSION_SAVE_EVERY_REQUEST = True
