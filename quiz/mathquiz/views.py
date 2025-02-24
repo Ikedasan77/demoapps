@@ -69,6 +69,9 @@ def quiz_view(request, category):
         print("カテゴリーが指定されていません。リダイレクトします。")
         return redirect("category_selection")
 
+    # 選択されたカテゴリーをセッションに保存（dashboardで利用するため）
+    request.session["selected_category"] = category
+
     if category == "全分野":
         questions = list(Question.objects.all())
     else:
@@ -158,13 +161,18 @@ def result_view(request):
         encouragement_message = encouragement_messages["medium"]
     else:
         encouragement_message = encouragement_messages["low"]
+
+    # セッションから選択されたカテゴリーを取得（なければ '全分野' をデフォルト）
+    selected_category = request.session.get("selected_category", "全分野")
+
     return render(request, "mathquiz/dashboard.html", {
         "score": score,
         "total_questions": total_questions,
         "score_percent": score_percent,
         "correct_answers": correct_answers,
         "wrong_answers": wrong_answers,
-        "encouragement_message": encouragement_message
+        "encouragement_message": encouragement_message,
+        "selected_category": selected_category
     })
 
 
