@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>問題選択</title>
-
     <style>
         body {
             background-color: #00AAEF;
@@ -14,7 +13,6 @@
             margin: 0;
             padding: 0;
         }
-
         .white-background {
             background-color: #FFFFFF;
             padding: 20px;
@@ -25,43 +23,38 @@
             text-align: center;
             padding-bottom: 30px;
         }
-
         h2 {
             color: #4CAF50;
             margin-bottom: 20px;
         }
-
         .category-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 15px; /* ✅ ボタンの間隔を広げる */
+            gap: 15px;
         }
-
         .category-btn {
             background-color: #4CAF50;
             color: #FFFFFF;
-            padding: 15px; /* ✅ ボタンのサイズを統一 */
+            padding: 15px;
             border-radius: 5px;
-            font-size: 1.2rem; /* ✅ 文字を少し大きく */
+            font-size: 1.2rem;
             border: none;
             cursor: pointer;
             width: 45%;
             max-width: 250px;
-            margin: 5px 0; /* ✅ ボタンの上下間隔を追加 */
-            transition: background-color 0.3s ease, transform 0.2s ease; /* ✅ なめらかな変化 */
+            margin: 5px 0;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
-
         .category-btn:hover {
-            background-color: #388E3C; /* ✅ ホバー時に濃い緑に変更 */
-            transform: scale(1.04); /* ✅ ホバー時に少し拡大 */
+            background-color: #388E3C;
+            transform: scale(1.06);
         }
-
         .full-width {
             width: 95%;
             max-width: 500px;
         }
-
         .logout-btn {
             background-color: #FF5733;
             padding: 12px 20px;
@@ -71,34 +64,30 @@
             border-radius: 5px;
             cursor: pointer;
             margin-top: 30px;
-            transition: background-color 0.3s ease, transform 0.2s ease; /* ✅ アニメーション追加 */
+            transition: background-color 0.3s ease, transform 0.2s ease;
             display: inline-block;
+            text-decoration: none;
         }
-
         .logout-btn:hover {
-            background-color: #D43F00; /* ✅ 濃いオレンジ */
-            transform: scale(1.1); /* ✅ ホバー時に少し拡大 */
+            background-color: #D43F00;
+            transform: scale(1.1);
         }
     </style>
 </head>
 <body>
     <div class="white-background">
         <h2>問題のカテゴリーを選択</h2>
-
         <div class="category-container">
-            <form action="{% url 'quiz' category='selected_category' %}" method="get">
-                <button type="submit" name="category" value="正負の数" class="category-btn">正負の数</button>
-                <button type="submit" name="category" value="文字と式" class="category-btn">文字と式</button>
-                <button type="submit" name="category" value="一次方程式" class="category-btn">一次方程式</button>
-                <button type="submit" name="category" value="連立方程式" class="category-btn">連立方程式</button>
-                <button type="submit" name="category" value="展開" class="category-btn">展開</button>
-                <button type="submit" name="category" value="因数分解" class="category-btn">因数分解</button>
-                <button type="submit" name="category" value="平方根の計算" class="category-btn">平方根の計算</button>
-                <button type="submit" name="category" value="二次方程式" class="category-btn">二次方程式</button>
-                <button type="submit" name="category" value="全分野" class="category-btn full-width">全分野</button>
-            </form>
+            <a href="{% url 'quiz' category='正負の数' %}" class="category-btn">正負の数</a>
+            <a href="{% url 'quiz' category='文字と式' %}" class="category-btn">文字と式</a>
+            <a href="{% url 'quiz' category='一次方程式' %}" class="category-btn">一次方程式</a>
+            <a href="{% url 'quiz' category='連立方程式' %}" class="category-btn">連立方程式</a>
+            <a href="{% url 'quiz' category='展開' %}" class="category-btn">展開</a>
+            <a href="{% url 'quiz' category='因数分解' %}" class="category-btn">因数分解</a>
+            <a href="{% url 'quiz' category='平方根の計算' %}" class="category-btn">平方根の計算</a>
+            <a href="{% url 'quiz' category='二次方程式' %}" class="category-btn">二次方程式</a>
+            <a href="{% url 'quiz' category='全分野' %}" class="category-btn full-width">全分野</a>
         </div>
-
         <a href="{% url 'logout' %}" class="logout-btn">ログアウト</a>
     </div>
 </body>

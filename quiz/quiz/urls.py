@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
@@ -24,24 +25,27 @@ urlpatterns = [
     path('admin/', admin.site.urls),  # 管理サイト
     path('', views.home, name='home'),  # ホームページ
 
-    # ✅ ログイン・新規登録・ログアウト
-    path('login/', views.login_view, name='login'),  
-    path('register/', views.register_view, name='register'),  
+    # ログイン・新規登録・ログアウト
+    path('login/', views.login_view, name='login'),
+    path('register/', views.register_view, name='register'),
     path('logout/', views.logout_view, name='logout'),
 
-    # ✅ 問題選択画面を追加
-    path('category_selection/', views.category_selection_view, name='category_selection'),  # ✅ 追加
+    # 問題選択画面
+    path('category_selection/', views.category_selection_view, name='category_selection'),
 
-    # ✅ クイズ関連
-    path('quiz/<str:category>/', views.quiz_view, name='quiz'),  # カテゴリ別クイズページ
-    path('quiz/submit/', views.submit_quiz_view, name='submit_quiz'),  
-    path('results/', views.result_view, name='results'),  
+    # クイズ関連：カテゴリー情報は必ずURLパスで受け取る
+    path('quiz/submit/', views.submit_quiz_view, name='submit_quiz'),
+    path('quiz/<str:category>/', views.quiz_view, name='quiz'),
+
+    path('results/', views.result_view, name='results'),
+
+    # プレビュー用のURL
+    path('preview/<int:question_id>/', views.preview_question, name='preview_question'),
 ]
 
-# ✅ Debug Toolbar 用（デバッグ時のみ有効）
 if settings.DEBUG:
     import debug_toolbar
     urlpatterns += [
-        path('__debug__/', include(debug_toolbar.urls)),  
+        path('__debug__/', include(debug_toolbar.urls)),
     ]
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
