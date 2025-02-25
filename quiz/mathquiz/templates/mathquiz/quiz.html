@@ -189,6 +189,13 @@
                 form.appendChild(inputQuestionId);
             });
 
+            // 追加：選択されたカテゴリーもフォームに含める
+            const categoryInput = document.createElement('input');
+            categoryInput.type = 'hidden';
+            categoryInput.name = 'selected_category';
+            categoryInput.value = `{{ selected_category }}`;
+            form.appendChild(categoryInput);
+
             form.submit();
         }
 

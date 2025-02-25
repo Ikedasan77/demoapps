@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>問題プレビュー</h2>
+    <p><strong>問題文:</strong> {{ question.text }}</p>
+    <p><strong>カテゴリー:</strong> {{ question.category }}</p>
+    <h3>正解</h3>
+    <ul>
+        {% for answer in question.correct_answers.all %}
+            <li>{{ answer.text }}</li>
+        {% endfor %}
+    </ul>
+    <h3>不正解の選択肢</h3>
+    <ul>
+        {% for choice in question.incorrect_choices.all %}
+            <li>{{ choice.text }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
