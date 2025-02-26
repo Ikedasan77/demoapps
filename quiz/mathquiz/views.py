@@ -6,6 +6,8 @@ from .models import Category, Question
 import random
 import json
 from django.utils.html import escape
+from .models import UserScore, Category  # 新しいモデルをインポート
+from django.db.models import Avg, Max
 
 
 def home(request):
@@ -133,12 +135,21 @@ def submit_quiz_view(request):
                 score += 1
             else:
                 wrong_questions.append(question.id)
+
         total_questions = len(questions)
+
+        # **スコアをデータベースに保存**
+        if request.user.is_authenticated:
+            category_name = request.session.get("selected_category", "全分野")
+            category = Category.objects.filter(name=category_name).first()
+            UserScore.objects.create(user=request.user, category=category, score=score, total_questions=total_questions)
+
+        # セッションにも保存（現行の仕組み）
         request.session["score"] = score
         request.session["wrong_questions"] = wrong_questions
         request.session["questions"] = [q.id for q in questions]
         request.session["total_questions"] = total_questions
-        return redirect("results")
+        return redirect("result")
     return redirect("quiz")
 
 
@@ -179,3 +190,31 @@ def result_view(request):
 def preview_question(request, question_id):
     question = get_object_or_404(Question, id=question_id)
     return render(request, "mathquiz/preview.html", {"question": question})
+
+def score_history_view(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    # カテゴリ一覧を取得
+    categories = Category.objects.all()
+
+    # フィルター用のカテゴリ選択
+    selected_category = request.GET.get("category", "all")
+
+    # クエリセットの初期化（全成績 or 選択カテゴリの成績）
+    if selected_category == "all":
+        scores = UserScore.objects.filter(user=request.user).order_by("-created_at")
+    else:
+        scores = UserScore.objects.filter(user=request.user, category__name=selected_category).order_by("-created_at")
+
+    # ユーザーの最高スコアと平均スコアを計算
+    max_score = scores.aggregate(Max("score"))["score__max"] or 0
+    avg_score = scores.aggregate(Avg("score"))["score__avg"] or 0
+
+    return render(request, "mathquiz/score_history.html", {
+        "scores": scores,
+        "categories": categories,
+        "selected_category": selected_category,
+        "max_score": max_score,
+        "avg_score": round(avg_score, 2)  # 小数第2位まで表示
+    })

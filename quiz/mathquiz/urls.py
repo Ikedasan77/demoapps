@@ -21,6 +21,11 @@ urlpatterns = [
     path('__debug__/', include('debug_toolbar.urls')),
 ]
 
+#ユーザーの成績を閲覧できるページを作成
+urlpatterns = [
+    path("score_history/", views.score_history_view, name="score_history"),
+]
+
 # **開発環境での静的ファイルの配信**
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
