@@ -6,6 +6,8 @@ from . import views  # viewsをインポート
 # アプリのURLパターンを定義
 urlpatterns = [
     path('', views.home, name='home'),  # トップページ (/) のルート
+    path("preview/<int:question_id>/", views.preview_question, name="preview_question"),  # ✅ これがあるか確認
+    path('score_history/', views.score_history_view, name='score_history'),  # 成績履歴のルート
 
     # **認証関連のURL**
     path('login/', views.login_view, name='login'),  # ログインページ

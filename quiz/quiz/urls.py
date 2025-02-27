@@ -24,6 +24,7 @@ from mathquiz import views  # mathquiz/views.py をインポート
 urlpatterns = [
     path('admin/', admin.site.urls),  # 管理サイト
     path('', views.home, name='home'),  # ホームページ
+    path('', include('mathquiz.urls')),  # ✅ mathquiz の URL を include
 
     # ログイン・新規登録・ログアウト
     path('login/', views.login_view, name='login'),

@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -10,7 +10,6 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-
 
 class Question(models.Model):
     text = models.TextField(
@@ -55,7 +54,6 @@ class Question(models.Model):
         category_name = self.category.name if self.category else "未分類"
         return f"[{category_name}] {self.text}"
 
-
 class CorrectAnswer(models.Model):  # ✅ 正解の選択肢を独立したモデルに変更
     question = models.ForeignKey(
         Question,
@@ -75,7 +73,6 @@ class CorrectAnswer(models.Model):  # ✅ 正解の選択肢を独立したモ�
     def __str__(self):
         return f"正解: {self.text} (問題: {self.question.text})"
 
-
 class IncorrectChoice(models.Model):
     question = models.ForeignKey(
         Question,
@@ -94,3 +91,13 @@ class IncorrectChoice(models.Model):
 
     def __str__(self):
         return f"不正解選択肢: {self.text} (問題: {self.question.text})"
+
+class UserScore(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # ユーザー情報
+    category = models.ForeignKey("Category", on_delete=models.SET_NULL, null=True, blank=True)  # カテゴリー
+    score = models.IntegerField()  # スコア
+    total_questions = models.IntegerField()  # 総問題数
+    created_at = models.DateTimeField(auto_now_add=True)  # 成績記録日時
+
+    def __str__(self):
+        return f"{self.user.username} - {self.category.name if self.category else '全カテゴリ'}: {self.score}/{self.total_questions}"

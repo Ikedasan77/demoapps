@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>成績履歴</title>
+
+    <style>
+        body {
+            background-color: #00AAEF;
+            font-family: Arial, sans-serif;
+            color: #FFFFFF;
+            margin: 0;
+            padding: 0;
+        }
+
+        .white-background {
+            background-color: #FFFFFF;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            margin: 30px auto;
+            max-width: 900px;
+        }
+
+        .quiz-container {
+            background-color: #4CAF50;
+            border: 5px solid #6b4226;
+            padding: 20px;
+            margin: 0 auto;
+            max-width: 800px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #FFFFFF;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #FFFFFF;
+            color: #333;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #008CBA;
+            color: #FFFFFF;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .stats-container {
+            background-color: #FFA500;
+            color: #FFFFFF;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px auto;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .filter-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .filter-container select {
+            font-size: 1rem;
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .back-button {
+            background-color: #008CBA;
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #005F7A;
+        }
+    </style>
+
+    <script>
+        function filterCategory() {
+            const selectedCategory = document.getElementById("categoryFilter").value;
+            window.location.href = `?category=${selectedCategory}`;
+        }
+    </script>
+</head>
+<body>
+    <div class="white-background">
+        <div class="quiz-container">
+            <h2>成績履歴</h2>
+
+            <!-- 最高スコア・平均スコアの表示 -->
+            <div class="stats-container">
+                <p><strong>最高スコア:</strong> {{ max_score }}</p>
+                <p><strong>平均スコア:</strong> {{ avg_score }}</p>
+            </div>
+
+            <!-- カテゴリ選択フィルター -->
+            <div class="filter-container">
+                <label for="categoryFilter">カテゴリを選択:</label>
+                <select id="categoryFilter" onchange="filterCategory()">
+                    <option value="all" {% if selected_category == "all" %}selected{% endif %}>すべて</option>
+                    {% for category in categories %}
+                        <option value="{{ category.name }}" {% if selected_category == category.name %}selected{% endif %}>{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- 成績一覧 -->
+            <table>
+                <tr>
+                    <th>日付</th>
+                    <th>カテゴリ</th>
+                    <th>スコア</th>
+                </tr>
+                {% for score in scores %}
+                <tr>
+                    <td>{{ score.created_at|date:"Y-m-d H:i" }}</td>
+                    <td>{{ score.category.name|default:"全分野" }}</td>
+                    <td>{{ score.score }}/{{ score.total_questions }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            <!-- ホームに戻るボタン -->
+            <script>
+                var homeUrl = "{% url 'home' %}";
+            </script>
+            
+            <button class="back-button" onclick="window.location.href=homeUrl">
+                ホームに戻る
+            </button>
+        </div>
+    </div>
+</body>
+</html>
