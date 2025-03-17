@@ -6,7 +6,7 @@ from django.utils.html import escape
 import random
 import json
 import logging
-from .models import Question, Category
+from mathquiz.models import Question, Category  # 修正済み
 
 logger = logging.getLogger(__name__)
 
