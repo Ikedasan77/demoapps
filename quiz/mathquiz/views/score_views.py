@@ -10,6 +10,9 @@ def score_history_view(request):
     user_scores = UserScore.objects.filter(user=request.user).order_by('-created_at')
 
     if not user_scores.exists():
-        messages.info(request, "まだ成績履歴がありません。クイズを受けてみましょう！")
+        messages.info(request, "まだ成績履歴がありません。問題を解いてみましょう！")
 
     return render(request, "mathquiz/score_history.html", {"user_scores": user_scores})
+
+def result_view(request):
+    return render(request, 'result.html')

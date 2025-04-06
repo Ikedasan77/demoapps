@@ -44,6 +44,9 @@ urlpatterns = [
 
     # mathquiz アプリ内の URL を include
     path('', include('mathquiz.urls')),
+
+    #スコア関連
+    path('result/', result_view, name='result'),
 ]
 
 # デバッグツールバー（開発時のみ）

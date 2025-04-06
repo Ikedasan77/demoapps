@@ -3,12 +3,18 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.html import escape
+from django.http import JsonResponse  # ← インポート追加
 import random
 import json
 import logging
 from mathquiz.models import Question, Category  # 修正済み
 
 logger = logging.getLogger(__name__)
+
+# ✅ トップページを表示する関数 (home)
+def home(request):
+    """トップページを表示"""
+    return render(request, 'mathquiz/home.html')  # 必ず 'mathquiz/home.html' というテンプレートを作成してください
 
 @login_required(login_url="login")
 def quiz_view(request, category):
@@ -56,3 +62,49 @@ def quiz_view(request, category):
         "questions_json": safe_questions_json,
         "selected_category": category
     })
+
+
+# ✅ 追加: クイズの解答を処理するビュー関数 (submit_quiz_view)
+@login_required(login_url="login")
+def submit_quiz_view(request):
+    """クイズの解答を処理"""
+    if request.method == "POST":
+        # フロントエンドから送信されたJSONデータを取得
+        submitted_data = json.loads(request.body)
+
+        # 必要なデータを取り出す
+        user_answers = submitted_data.get("user_answers", {})
+        category = request.session.get("selected_category", "全分野")
+        
+        # 正答数をカウント
+        correct_count = 0
+        total_count = len(user_answers)
+        
+        for question_id, user_answer in user_answers.items():
+            try:
+                question = Question.objects.get(id=question_id)
+                correct_answers = [answer.text for answer in question.correct_answers.all()]
+
+                if user_answer in correct_answers:
+                    correct_count += 1
+            except Question.DoesNotExist:
+                logger.warning(f"問題が存在しません: {question_id}")
+
+        # 成績を保存するなどの処理を追加可能
+
+        # 結果をフロントエンドに返す
+        response_data = {
+            "correct_count": correct_count,
+            "total_count": total_count,
+            "score": (correct_count / total_count) * 100 if total_count > 0 else 0,
+        }
+
+        return JsonResponse(response_data)
+
+    # POST 以外のリクエストは許可しない
+    return JsonResponse({"error": "POSTリクエストのみ許可されています。"}, status=400)
+
+# ✅ カテゴリー選択画面を表示するビュー関数 (これが必要です)
+def category_selection(request):
+    """カテゴリー選択画面を表示するビュー"""
+    return render(request, 'mathquiz/category_selection.html')
