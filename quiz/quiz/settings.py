@@ -68,7 +68,6 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            BASE_DIR / "templates",  # 既存のカスタムテンプレート
             BASE_DIR / "mathquiz/templates",  # 追加する！
         ],
         'APP_DIRS': True,

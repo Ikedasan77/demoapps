@@ -19,30 +19,37 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from mathquiz import views  # mathquiz/views.py をインポート
+
+# 各 views ファイルから必要な関数をインポート（mathquiz.views. を明示）
+from mathquiz.views.auth_views import login_view, register_view, logout_view
+from mathquiz.views.misc_views import home, preview_question
+from mathquiz.views.quiz_views import quiz_view
+from mathquiz.views.score_views import result_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),  # 管理サイト
-    path('', views.home, name='home'),  # ホームページ
+    path('', home, name='home'),  # ホームページ（views.home ではなく、misc_views.py の home を使用）
 
     # ログイン・新規登録・ログアウト
-    path('login/', views.login_view, name='login'),
-    path('register/', views.register_view, name='register'),
-    path('logout/', views.logout_view, name='logout'),
+    path('login/', login_view, name='login'),
+    path('register/', register_view, name='register'),
+    path('logout/', logout_view, name='logout'),
 
-    # 問題選択画面
-    path('category_selection/', views.category_selection_view, name='category_selection'),
+    # クイズ関連
+    path('quiz/<str:category>/', quiz_view, name='quiz'),
+    path('results/', result_view, name='results'),
 
-    # クイズ関連：カテゴリー情報は必ずURLパスで受け取る
-    path('quiz/submit/', views.submit_quiz_view, name='submit_quiz'),
-    path('quiz/<str:category>/', views.quiz_view, name='quiz'),
+    # 問題プレビュー
+    path('preview/<int:question_id>/', preview_question, name='preview_question'),
 
-    path('results/', views.result_view, name='results'),
+    # mathquiz アプリ内の URL を include
+    path('', include('mathquiz.urls')),
 
-    # プレビュー用のURL
-    path('preview/<int:question_id>/', views.preview_question, name='preview_question'),
+    #スコア関連
+    path('result/', result_view, name='result'),
 ]
 
+# デバッグツールバー（開発時のみ）
 if settings.DEBUG:
     import debug_toolbar
     urlpatterns += [
